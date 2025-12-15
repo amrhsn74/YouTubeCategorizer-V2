@@ -120,6 +120,7 @@
             color: #004085;
         }
 
+        /* UPDATED: Added default background-color */
         .category-header {
             padding: 12px 20px;
             border-radius: 6px;
@@ -129,6 +130,7 @@
             margin-bottom: 15px;
             color: white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: #6c757d; /* Default Grey for unknown categories */
         }
 
         .category-Technology {
@@ -239,6 +241,7 @@
             color: #666;
         }
 
+        /* UPDATED: Added default background-color */
         .category-badge {
             display: inline-block;
             padding: 4px 10px;
@@ -247,6 +250,7 @@
             font-weight: bold;
             color: white;
             margin-left: 8px;
+            background-color: #6c757d; /* Default Grey for unknown categories */
         }
 
         .badge-Technology {
@@ -466,14 +470,14 @@
                 const vidItem = document.createElement('div');
                 vidItem.className = 'video-item';
                 vidItem.innerHTML = `
-                        <div class="video-content">
-                            <h3>
-                                ${video.title}
-                                <span class="category-badge badge-${video.categoryLabel}">${video.categoryLabel}</span>
-                            </h3>
-                            <div class="channel-name">${video.channelName}</div>
-                            <div class="video-desc">${video.description || 'No description available.'}</div>
-                        </div>`;
+                            <div class="video-content">
+                                <h3>
+                                    ${video.title}
+                                    <span class="category-badge badge-${video.categoryLabel}">${video.categoryLabel}</span>
+                                </h3>
+                                <div class="channel-name">${video.channelName}</div>
+                                <div class="video-desc">${video.description || 'No description available.'}</div>
+                            </div>`;
                 container.appendChild(vidItem);
             });
         }
