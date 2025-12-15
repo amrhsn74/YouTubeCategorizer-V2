@@ -46,8 +46,9 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddScoped<IVideoProcessingService, VideoProcessingService>();
 
+// Use the Local service instead of the API wrapper
 builder.Services.AddScoped<IYouTubeService>(provider =>
-    new YouTubeService(builder.Configuration["YouTube:ApiKey"]));
+    new LocalYouTubeService(builder.Configuration["YouTube:ApiKey"]));
 
 builder.Services.AddHttpClient<ICategorizationService, CategorizationService>(client =>
 {

@@ -14,11 +14,12 @@ namespace YouTubeCategorizer.Application.Services
         Task<List<(string videoId, string title, string description)>> GetChannelVideosAsync(string channelId);
     }
 
-    public class YouTubeService : IYouTubeService
+    // CHANGE: Class renamed from YouTubeService to LocalYouTubeService
+    public class LocalYouTubeService : IYouTubeService
     {
         private readonly string _apiKey;
 
-        public YouTubeService(string apiKey)
+        public LocalYouTubeService(string apiKey)
         {
             _apiKey = apiKey;
         }
