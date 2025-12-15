@@ -1,0 +1,14 @@
+# Flask web framework
+flask==3.0.0
+
+# CORS support (allows C# application to make requests)
+flask-cors==4.0.0
+
+# Machine learning library (must match training environment)
+scikit-learn==1.3.2
+
+# Model serialization
+joblib==1.3.2
+
+# Numerical operations
+numpy==1.24.3

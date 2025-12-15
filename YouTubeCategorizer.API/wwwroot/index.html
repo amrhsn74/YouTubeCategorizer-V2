@@ -1,0 +1,493 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Categorizer</title>
+    <style>
+        :root {
+            --primary: #d32f2f;
+            --bg: #f9f9f9;
+            --card-bg: #ffffff;
+            --text: #333;
+            --border: #ddd;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+            input[type="text"]::placeholder {
+                color: #aaa;
+                font-style: italic;
+            }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+            button:hover {
+                background-color: #b71c1c;
+            }
+
+            button:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+
+            button.secondary {
+                background-color: #333;
+                margin-top: 10px;
+            }
+
+                button.secondary:hover {
+                    background-color: #555;
+                }
+
+        #statusMessage {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            display: none;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .category-header {
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .category-Technology {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .category-Education {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .category-Entertainment {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .category-Gaming {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .category-Music {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .category-Sports {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+        }
+
+        .category-Science {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .category-Food {
+            background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);
+        }
+
+        .category-Lifestyle {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .category-DIY {
+            background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%);
+        }
+
+        .category-Business {
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+        }
+
+        .category-Health {
+            background: linear-gradient(135deg, #96fbc4 0%, #f9f586 100%);
+        }
+
+        .video-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            display: flex;
+            gap: 15px;
+        }
+
+        .video-content h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1em;
+        }
+
+        .channel-name {
+            font-size: 0.85em;
+            color: var(--primary);
+            font-weight: 600;
+            display: inline-block;
+            background: #ffebee;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .video-desc {
+            font-size: 0.9em;
+            color: #555;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #f1f1f1;
+        }
+
+        .pagination-btn {
+            width: auto;
+            padding: 8px 16px;
+            background-color: #fff;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+            .pagination-btn:hover {
+                background-color: var(--primary);
+                color: white;
+            }
+
+        .page-info {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            color: white;
+            margin-left: 8px;
+        }
+
+        .badge-Technology {
+            background: #667eea;
+        }
+
+        .badge-Education {
+            background: #f5576c;
+        }
+
+        .badge-Entertainment {
+            background: #00f2fe;
+        }
+
+        .badge-Gaming {
+            background: #38f9d7;
+        }
+
+        .badge-Music {
+            background: #fee140;
+            color: #333;
+        }
+
+        .badge-Sports {
+            background: #30cfd0;
+        }
+
+        .badge-Science {
+            background: #fed6e3;
+            color: #333;
+        }
+
+        .badge-Food {
+            background: #ff6a88;
+        }
+
+        .badge-Lifestyle {
+            background: #fcb69f;
+        }
+
+        .badge-DIY {
+            background: #ff6e7f;
+        }
+
+        .badge-Business {
+            background: #8ec5fc;
+        }
+
+        .badge-Health {
+            background: #96fbc4;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Categorizer</h1>
+
+        <div class="card">
+            <h2>1. Input Channels</h2>
+            <p>Enter up to 3 YouTube Channel URLs</p>
+
+            <div class="form-group">
+                <label for="url1">Channel URL 1</label>
+                <input type="text" id="url1" placeholder="https://youtube.com/@example1">
+            </div>
+
+            <div class="form-group">
+                <label for="url2">Channel URL 2</label>
+                <input type="text" id="url2" placeholder="https://youtube.com/@example2">
+            </div>
+
+            <div class="form-group">
+                <label for="url3">Channel URL 3</label>
+                <input type="text" id="url3" placeholder="https://youtube.com/@example3">
+            </div>
+
+            <button onclick="startProcessing()">Start Processing</button>
+            <div id="statusMessage"></div>
+        </div>
+
+        <div class="card">
+            <h2>2. View Results</h2>
+            <p>Processing happens in the background. Click below to refresh.</p>
+            <button class="secondary" onclick="fetchResults()">Load / Refresh Results</button>
+
+            <div id="resultsArea"></div>
+
+            <div id="pagination" class="pagination-controls" style="display: none;">
+                <button class="pagination-btn" onclick="changePage(-1)">Previous</button>
+                <span id="pageInfo" class="page-info">Page 1</span>
+                <button class="pagination-btn" onclick="changePage(1)">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allVideosFlat = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        async function startProcessing() {
+            const btn = document.querySelector('button[onclick="startProcessing()"]');
+            const statusDiv = document.getElementById('statusMessage');
+
+            const payload = {
+                channelUrl1: document.getElementById('url1').value,
+                channelUrl2: document.getElementById('url2').value,
+                channelUrl3: document.getElementById('url3').value
+            };
+
+            if (!payload.channelUrl1 && !payload.channelUrl2 && !payload.channelUrl3) {
+                alert("Please enter at least one URL");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'info';
+            statusDiv.innerText = "Sending request to server...";
+
+            try {
+                const response = await fetch('/api/Videos/process', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    statusDiv.className = 'success';
+                    statusDiv.innerText = "Job started! Please wait 1-2 minutes for the AI to finish, then click 'Load Results'.";
+                } else {
+                    const errText = await response.text();
+                    throw new Error(errText || "Server responded with an error.");
+                }
+            } catch (error) {
+                statusDiv.className = 'error';
+                statusDiv.innerText = "Error: " + error.message;
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Start Processing";
+            }
+        }
+
+        async function fetchResults() {
+            const resultsArea = document.getElementById('resultsArea');
+            const paginationDiv = document.getElementById('pagination');
+
+            resultsArea.innerHTML = '<p style="text-align:center;">Loading data...</p>';
+            paginationDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/Videos/categorized');
+                if (!response.ok) throw new Error("Failed to fetch results.");
+                const data = await response.json();
+
+                processDataForPagination(data);
+            } catch (error) {
+                resultsArea.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+
+        function processDataForPagination(data) {
+            allVideosFlat = [];
+
+            if (data.categories && data.categories.length > 0) {
+                data.categories.forEach(cat => {
+                    cat.videos.forEach(video => {
+                        allVideosFlat.push({
+                            ...video,
+                            categoryLabel: cat.label
+                        });
+                    });
+                });
+            }
+
+            allVideosFlat.sort((a, b) => a.categoryLabel.localeCompare(b.categoryLabel));
+
+            if (allVideosFlat.length === 0) {
+                document.getElementById('resultsArea').innerHTML = "<p>No categorized videos found yet.</p>";
+                document.getElementById('pagination').style.display = 'none';
+            } else {
+                currentPage = 1;
+                renderPage();
+                document.getElementById('pagination').style.display = 'flex';
+            }
+        }
+
+        function renderPage() {
+            const container = document.getElementById('resultsArea');
+            const pageInfo = document.getElementById('pageInfo');
+            container.innerHTML = "";
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageItems = allVideosFlat.slice(startIndex, endIndex);
+            const totalPages = Math.ceil(allVideosFlat.length / itemsPerPage);
+
+            pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+
+            let lastLabel = "";
+
+            if (startIndex > 0) {
+                lastLabel = allVideosFlat[startIndex - 1].categoryLabel;
+            }
+
+            pageItems.forEach(video => {
+                if (video.categoryLabel !== lastLabel) {
+                    const header = document.createElement('div');
+                    header.className = `category-header category-${video.categoryLabel}`;
+                    header.innerText = video.categoryLabel;
+                    container.appendChild(header);
+                    lastLabel = video.categoryLabel;
+                }
+
+                const vidItem = document.createElement('div');
+                vidItem.className = 'video-item';
+                vidItem.innerHTML = `
+                        <div class="video-content">
+                            <h3>
+                                ${video.title}
+                                <span class="category-badge badge-${video.categoryLabel}">${video.categoryLabel}</span>
+                            </h3>
+                            <div class="channel-name">${video.channelName}</div>
+                            <div class="video-desc">${video.description || 'No description available.'}</div>
+                        </div>`;
+                container.appendChild(vidItem);
+            });
+        }
+
+        function changePage(delta) {
+            const totalPages = Math.ceil(allVideosFlat.length / itemsPerPage);
+            const newPage = currentPage + delta;
+
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderPage();
+                document.querySelector('.secondary').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    </script>
+</body>
+</html>
