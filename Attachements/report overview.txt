@@ -1,0 +1,43 @@
+Machine Learning Module Report: YouTube Categorizer V2
+1. Overview The Machine Learning module serves as the core intelligence engine for the YouTube Categorizer application. It is designed as a standalone microservice that accepts raw text (video titles and descriptions) and returns a predicted category with a confidence score. Unlike generic Zero-Shot models, this module uses a Supervised Learning approach, having been custom-trained on a specific dataset to recognize distinct YouTube video categories.
+
+2. Architecture & Pipeline The ML workflow follows a standard NLP (Natural Language Processing) pipeline, implemented using Python and Scikit-Learn:
+
+Data Preprocessing: Raw text data is cleaned and standardized (handling removal of stop words, special characters, and case normalization) via Jupyter notebooks.
+
+Feature Extraction (Vectorization): The system uses TF-IDF (Term Frequency-Inverse Document Frequency) to convert text into numerical vectors. This allows the model to weigh the importance of specific keywords (e.g., "recipe" vs. "gameplay") relative to the entire dataset. The vectorizer is serialized as tfidf_vectorizer.pkl.
+
+Classification Model: The core predictor is a trained Scikit-Learn classifier (saved as best_model.pkl). It maps the TF-IDF vectors to specific category IDs.
+
+Label Mapping: A JSON mapping file (label_mapping.json) translates the model's numerical output (IDs) back into human-readable category names (e.g., 0 -> Automotive, 1 -> Comedy).
+
+3. Deployment (Microservice) The model is hosted using Flask, a lightweight Python web framework, effectively decoupling the ML logic from the main .NET application.
+
+API Endpoints:
+
+POST /categorize: Accepts a JSON payload {"text": "..."}, transforms it using the loaded vectorizer, runs the prediction, and returns the category and confidence score.
+
+GET /health: Used by the .NET backend to verify the ML service is online and all model artifacts (model, vectorizer, mappings) are loaded correctly.
+
+GET /model/info: returns metadata about the model type and training configuration.
+
+4. Integration The main application communicates with this Python service via HTTP requests. The C# CategorizationService serializes the video data, sends it to the Flask API running on port 5001, and deserializes the JSON response.
+
+5. Technologies Used
+
+Language: Python 3.x
+
+Framework: Flask, Flask-CORS
+
+Libraries: Scikit-Learn (Modeling), Pandas/NumPy (Data manipulation), Joblib (Serialization), NLTK/Spacy (implied for text preprocessing).
+
+Model Workflow
+Input: Receives video title + description.
+
+Transform: TfidfVectorizer converts text to a numeric vector.
+
+Predict: The loaded best_model.pkl predicts the category ID.
+
+Map: label_mapping.json converts the ID to a string (e.g., "Education").
+
+Output: Returns JSON response to the main application.

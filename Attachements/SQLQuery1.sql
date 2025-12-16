@@ -1,0 +1,11 @@
+DELETE FROM Videos;
+DELETE FROM Channels;
+DELETE FROM Categories;
+
+DBCC CHECKIDENT ('Videos', RESEED, 0);
+DBCC CHECKIDENT ('Channels', RESEED, 0);
+DBCC CHECKIDENT ('Categories', RESEED, 0);
+
+SELECT * FROM Videos;
+SELECT * FROM Channels;
+SELECT * FROM Categories;
