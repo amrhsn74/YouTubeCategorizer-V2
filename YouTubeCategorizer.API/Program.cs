@@ -1,4 +1,5 @@
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using YouTubeCategorizer.Application.Services;
@@ -8,7 +9,9 @@ using YouTubeCategorizer.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(opts =>
+        opts.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -52,27 +55,48 @@ builder.Services.AddScoped<IYouTubeService>(provider =>
 
 builder.Services.AddHttpClient<ICategorizationService, CategorizationService>(client =>
 {
-    client.Timeout = TimeSpan.FromSeconds(30); 
+    client.Timeout = TimeSpan.FromSeconds(30); // Per-request timeout; retries handle overall resilience
 });
 
 var app = builder.Build();
+
+// CORS must be applied very early in the pipeline
+app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    // Skip HTTPS redirection in Development
+}
+else
+{
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
-
-app.UseDefaultFiles();
-app.UseStaticFiles();
-app.UseCors("AllowAll");
+// Disable static files serving - use Angular frontend instead
+// app.UseDefaultFiles();
+// app.UseStaticFiles();
 
 app.UseAuthorization();
 
-app.UseHangfireDashboard();
+if (app.Environment.IsDevelopment())
+{
+    app.UseHangfireDashboard("/hangfire", new DashboardOptions
+    {
+        Authorization = new[] { new AllowAllDashboardAuthorizationFilter() }
+    });
+}
+else
+{
+    app.UseHangfireDashboard("/hangfire");
+}
 
 app.MapControllers();
 
 app.Run();
+
+internal sealed class AllowAllDashboardAuthorizationFilter : IDashboardAuthorizationFilter
+{
+    public bool Authorize(DashboardContext context) => true;
+}

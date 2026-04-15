@@ -1,0 +1,11 @@
+<div class="pagination">
+  <button class="page-btn" [disabled]="!hasPrev" (click)="prev()">
+    ← Prev
+  </button>
+
+  <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+
+  <button class="page-btn" [disabled]="!hasNext" (click)="next()">
+    Next →
+  </button>
+</div>

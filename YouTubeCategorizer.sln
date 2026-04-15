@@ -13,6 +13,96 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTubeCategorizer.Infrastr
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "ML_Model", "ML_Model\ML_Model.pyproj", "{5D36AFB8-6E0B-4140-BFAB-D4D1CF6E0635}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "yt-categorizer", "yt-categorizer", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		yt-categorizer\angular.json = yt-categorizer\angular.json
+		yt-categorizer\package-lock.json = yt-categorizer\package-lock.json
+		yt-categorizer\package.json = yt-categorizer\package.json
+		yt-categorizer\proxy.conf.json = yt-categorizer\proxy.conf.json
+		yt-categorizer\tsconfig.app.json = yt-categorizer\tsconfig.app.json
+		yt-categorizer\tsconfig.json = yt-categorizer\tsconfig.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{35731892-3CDD-42A9-9CE6-96E575EEFC4B}"
+	ProjectSection(SolutionItems) = preProject
+		yt-categorizer\src\index.html = yt-categorizer\src\index.html
+		yt-categorizer\src\main.ts = yt-categorizer\src\main.ts
+		yt-categorizer\src\styles.scss = yt-categorizer\src\styles.scss
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{5C5CA86D-F1C5-4214-983A-C381ED6194FA}"
+	ProjectSection(SolutionItems) = preProject
+		yt-categorizer\src\app\app.component.ts = yt-categorizer\src\app\app.component.ts
+		yt-categorizer\src\app\app.config.ts = yt-categorizer\src\app\app.config.ts
+		yt-categorizer\src\app\app.routes.ts = yt-categorizer\src\app\app.routes.ts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{464FD4FC-C9A5-456E-8C2F-A496E18E58EF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "features", "features", "{DB8466BD-9E3F-4B46-BA6A-466B4D0091A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "layout", "layout", "{D179141B-195F-4790-9C1D-E3AA2C4E25CB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sidebar", "sidebar", "{F0B69560-3EA8-41B1-8367-43781C3A3F57}"
+	ProjectSection(SolutionItems) = preProject
+		yt-categorizer\src\app\layout\sidebar\sidebar.component.html = yt-categorizer\src\app\layout\sidebar\sidebar.component.html
+		yt-categorizer\src\app\layout\sidebar\sidebar.component.scss = yt-categorizer\src\app\layout\sidebar\sidebar.component.scss
+		yt-categorizer\src\app\layout\sidebar\sidebar.component.ts = yt-categorizer\src\app\layout\sidebar\sidebar.component.ts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "topbar", "topbar", "{B02B1ECD-04A0-4860-8E15-C064EC519BF0}"
+	ProjectSection(SolutionItems) = preProject
+		yt-categorizer\src\app\layout\topbar\topbar.component.html = yt-categorizer\src\app\layout\topbar\topbar.component.html
+		yt-categorizer\src\app\layout\topbar\topbar.component.scss = yt-categorizer\src\app\layout\topbar\topbar.component.scss
+		yt-categorizer\src\app\layout\topbar\topbar.component.ts = yt-categorizer\src\app\layout\topbar\topbar.component.ts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dashboard", "dashboard", "{CB40A05E-C3C2-4408-93DE-83AE8E33640D}"
+	ProjectSection(SolutionItems) = preProject
+		yt-categorizer\src\app\features\dashboard\dashboard.component.html = yt-categorizer\src\app\features\dashboard\dashboard.component.html
+		yt-categorizer\src\app\features\dashboard\dashboard.component.scss = yt-categorizer\src\app\features\dashboard\dashboard.component.scss
+		yt-categorizer\src\app\features\dashboard\dashboard.component.ts = yt-categorizer\src\app\features\dashboard\dashboard.component.ts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "components", "components", "{894FCB05-F072-4870-944C-3B477F523E10}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "channel-input", "channel-input", "{FC6CB39B-89A7-489F-9D50-01954832033C}"
+	ProjectSection(SolutionItems) = preProject
+		yt-categorizer\src\app\features\dashboard\components\channel-input\channel-input.component.html = yt-categorizer\src\app\features\dashboard\components\channel-input\channel-input.component.html
+		yt-categorizer\src\app\features\dashboard\components\channel-input\channel-input.component.scss = yt-categorizer\src\app\features\dashboard\components\channel-input\channel-input.component.scss
+		yt-categorizer\src\app\features\dashboard\components\channel-input\channel-input.component.ts = yt-categorizer\src\app\features\dashboard\components\channel-input\channel-input.component.ts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "video-card", "video-card", "{BF0BFAB2-2568-41C5-881C-0B5185AFCF1F}"
+	ProjectSection(SolutionItems) = preProject
+		yt-categorizer\src\app\features\dashboard\components\video-card\video-card.component.html = yt-categorizer\src\app\features\dashboard\components\video-card\video-card.component.html
+		yt-categorizer\src\app\features\dashboard\components\video-card\video-card.component.scss = yt-categorizer\src\app\features\dashboard\components\video-card\video-card.component.scss
+		yt-categorizer\src\app\features\dashboard\components\video-card\video-card.component.ts = yt-categorizer\src\app\features\dashboard\components\video-card\video-card.component.ts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stats-bar", "stats-bar", "{B6D2C26B-5882-4CC0-B05A-51BDD90BA4F4}"
+	ProjectSection(SolutionItems) = preProject
+		yt-categorizer\src\app\features\dashboard\components\stats-bar\stats-bar.component.html = yt-categorizer\src\app\features\dashboard\components\stats-bar\stats-bar.component.html
+		yt-categorizer\src\app\features\dashboard\components\stats-bar\stats-bar.component.scss = yt-categorizer\src\app\features\dashboard\components\stats-bar\stats-bar.component.scss
+		yt-categorizer\src\app\features\dashboard\components\stats-bar\stats-bar.component.ts = yt-categorizer\src\app\features\dashboard\components\stats-bar\stats-bar.component.ts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "results", "results", "{9C8EE63D-5531-4701-BE2B-56678DF5DA4B}"
+	ProjectSection(SolutionItems) = preProject
+		yt-categorizer\src\app\features\dashboard\components\results\results.component.html = yt-categorizer\src\app\features\dashboard\components\results\results.component.html
+		yt-categorizer\src\app\features\dashboard\components\results\results.component.scss = yt-categorizer\src\app\features\dashboard\components\results\results.component.scss
+		yt-categorizer\src\app\features\dashboard\components\results\results.component.ts = yt-categorizer\src\app\features\dashboard\components\results\results.component.ts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pagination", "pagination", "{E8018BD3-7EFF-4225-BD75-40759E486398}"
+	ProjectSection(SolutionItems) = preProject
+		yt-categorizer\src\app\features\dashboard\components\pagination\pagination.component.html = yt-categorizer\src\app\features\dashboard\components\pagination\pagination.component.html
+		yt-categorizer\src\app\features\dashboard\components\pagination\pagination.component.scss = yt-categorizer\src\app\features\dashboard\components\pagination\pagination.component.scss
+		yt-categorizer\src\app\features\dashboard\components\pagination\pagination.component.ts = yt-categorizer\src\app\features\dashboard\components\pagination\pagination.component.ts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "node_modules", "node_modules", "{81DC7832-17D1-4099-A64F-35A8C1A2145B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +130,23 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{35731892-3CDD-42A9-9CE6-96E575EEFC4B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{5C5CA86D-F1C5-4214-983A-C381ED6194FA} = {35731892-3CDD-42A9-9CE6-96E575EEFC4B}
+		{464FD4FC-C9A5-456E-8C2F-A496E18E58EF} = {5C5CA86D-F1C5-4214-983A-C381ED6194FA}
+		{DB8466BD-9E3F-4B46-BA6A-466B4D0091A7} = {5C5CA86D-F1C5-4214-983A-C381ED6194FA}
+		{D179141B-195F-4790-9C1D-E3AA2C4E25CB} = {5C5CA86D-F1C5-4214-983A-C381ED6194FA}
+		{F0B69560-3EA8-41B1-8367-43781C3A3F57} = {D179141B-195F-4790-9C1D-E3AA2C4E25CB}
+		{B02B1ECD-04A0-4860-8E15-C064EC519BF0} = {D179141B-195F-4790-9C1D-E3AA2C4E25CB}
+		{CB40A05E-C3C2-4408-93DE-83AE8E33640D} = {DB8466BD-9E3F-4B46-BA6A-466B4D0091A7}
+		{894FCB05-F072-4870-944C-3B477F523E10} = {CB40A05E-C3C2-4408-93DE-83AE8E33640D}
+		{FC6CB39B-89A7-489F-9D50-01954832033C} = {894FCB05-F072-4870-944C-3B477F523E10}
+		{BF0BFAB2-2568-41C5-881C-0B5185AFCF1F} = {894FCB05-F072-4870-944C-3B477F523E10}
+		{B6D2C26B-5882-4CC0-B05A-51BDD90BA4F4} = {894FCB05-F072-4870-944C-3B477F523E10}
+		{9C8EE63D-5531-4701-BE2B-56678DF5DA4B} = {894FCB05-F072-4870-944C-3B477F523E10}
+		{E8018BD3-7EFF-4225-BD75-40759E486398} = {894FCB05-F072-4870-944C-3B477F523E10}
+		{81DC7832-17D1-4099-A64F-35A8C1A2145B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {81F83BC7-3CB5-416C-84D2-06C21BE8C6E5}

@@ -1,0 +1,131 @@
+<div class="page-body">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">All Videos</h1>
+      <p class="page-subtitle">All videos from the database</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" (click)="loadData(true)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1 4 1 10 7 10"/>
+          <path d="M3.51 15a9 9 0 1 0 .49-3.5"/>
+        </svg>
+        Refresh
+      </button>
+      <span class="total-badge">{{ allVideos.length }} total</span>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner-lg"></div>
+      <p>Loading videos…</p>
+    </div>
+  }
+
+  @if (!loading && allVideos.length > 0) {
+    <!-- Filters -->
+    <div class="filters-bar">
+      <div class="filter-group">
+        <label for="cat">Category</label>
+        <select id="cat" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+          <option value="all">All Categories</option>
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="ch">Channel</label>
+        <select id="ch" [(ngModel)]="selectedChannel" (change)="onFilterChange()">
+          <option value="all">All Channels</option>
+          @for (ch of channels; track ch) {
+            <option [value]="ch">{{ ch }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group filter-grow">
+        <label for="search">Search</label>
+        <input id="search" type="text" [(ngModel)]="searchText"
+               (input)="onFilterChange()" placeholder="Search videos…" />
+      </div>
+
+      <div class="filter-group">
+        <label>Page size</label>
+        <div class="size-buttons">
+          @for (size of [10, 15, 20, 50]; track size) {
+            <button [class.active]="pageSize === size" (click)="changePageSize(size)">{{ size }}</button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-num">#</th>
+              <th class="col-title">Title</th>
+              <th class="col-channel">Channel</th>
+              <th class="col-cat">Category</th>
+              <th class="col-desc">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (video of paginatedVideos; track video.videoId; let i = $index) {
+              <tr>
+                <td class="col-num num-cell">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td class="col-title">{{ video.title }}</td>
+                <td class="col-channel ch-cell">{{ video.channelName }}</td>
+                <td class="col-cat">
+                  <span class="cat-badge">{{ video.categoryLabel }}</span>
+                </td>
+                <td class="col-desc desc-cell">{{ video.description | slice:0:100 }}…</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1) {
+      <div class="pagination">
+        <button [disabled]="currentPage === 1" (click)="prevPage()">← Prev</button>
+
+        @for (p of pageNumbers; track p) {
+          <button (click)="goToPage(p)" [class.active]="p === currentPage" [disabled]="p === '...'">{{ p }}</button>
+        }
+
+        <button [disabled]="currentPage === totalPages" (click)="nextPage()">Next →</button>
+      </div>
+
+      <p class="page-info">
+        Showing {{ paginatedVideos.length }} of {{ filteredVideos.length }} videos &nbsp;·&nbsp;
+        Page {{ currentPage }} of {{ totalPages }}
+      </p>
+    }
+  }
+
+  @if (!loading && error) {
+    <div class="error-state">
+      <p class="error-title">Cannot connect to the API</p>
+      <p class="error-hint">Make sure the .NET API is running on port 5010 (<code>dotnet run</code> in the API project).</p>
+      <button class="btn btn-primary btn-sm" (click)="loadData(true)">Retry</button>
+    </div>
+  }
+
+  @if (!loading && !error && allVideos.length === 0) {
+    <div class="empty-state">
+      <p>No videos found. Start by processing YouTube channels.</p>
+    </div>
+  }
+
+</div>

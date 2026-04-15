@@ -1,0 +1,51 @@
+<aside class="sidebar">
+
+  <!-- Brand -->
+  <div class="sidebar-brand">
+    <a class="brand-mark" routerLink="/">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+        </svg>
+      </div>
+      <div class="brand-name"><span>YT</span> Categorizer</div>
+    </a>
+  </div>
+
+  <!-- Nav -->
+  <nav class="sidebar-nav">
+    @for (section of navSections; track section.title) {
+      <div class="nav-section-label">{{ section.title }}</div>
+      @for (item of section.items; track item.route) {
+        <a
+          class="nav-item"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+        >
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path [attr.d]="item.icon"/>
+          </svg>
+          {{ item.label }}
+          @if (item.badge) {
+            <span class="nav-badge">{{ item.badge }}</span>
+          }
+        </a>
+      }
+    }
+  </nav>
+
+  <!-- User footer -->
+  <div class="sidebar-footer">
+    <div class="user-block">
+      <div class="avatar">AB</div>
+      <div>
+        <div class="user-name">Abdelrhman</div>
+        <div class="user-plan">Free Plan</div>
+      </div>
+    </div>
+  </div>
+
+</aside>

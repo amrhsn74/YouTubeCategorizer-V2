@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>YouTube Categorizer — UX Research</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f7f8fa;
+    color: #1a1a2e;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: #1a1a2e;
+    color: #fff;
+    padding: 36px 48px 32px;
+    border-bottom: 3px solid #e63946;
+  }
+  .site-header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 6px; }
+  .site-header p  { color: #aab4c8; font-size: 13px; }
+  .header-meta {
+    display: flex; gap: 24px; margin-top: 18px; flex-wrap: wrap;
+  }
+  .header-meta span {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    color: #c9d4e8;
+  }
+
+  /* ── Layout ── */
+  .container { max-width: 1080px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  /* ── Section headers ── */
+  .section {
+    margin-bottom: 56px;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e63946;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-num {
+    background: #e63946;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 2px 9px;
+    border-radius: 20px;
+  }
+  .section-desc {
+    color: #5a6380;
+    font-size: 13px;
+    margin-top: 8px;
+    margin-bottom: 24px;
+  }
+
+  /* ── Personas ── */
+  .personas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .persona-card {
+    background: #fff;
+    border: 1.5px solid #e0e4ef;
+    border-radius: 14px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .persona-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--accent);
+  }
+  .persona-avatar {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 14px;
+    background: var(--avatar-bg);
+  }
+  .persona-name { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .persona-role { font-size: 12px; color: #7a84a0; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .persona-bio  { font-size: 13px; color: #4a5270; margin-bottom: 14px; line-height: 1.55; }
+  .persona-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ptag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #f0f2fa;
+    color: #5060a0;
+    border: 1px solid #dde1f0;
+  }
+
+  /* ── Interview ── */
+  .interview-block {
+    background: #fff;
+    border: 1.5px solid #e0e4ef;
+    border-radius: 14px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .interview-header {
+    background: #f6f7fb;
+    border-bottom: 1px solid #e0e4ef;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .interview-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--avatar-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+  .interview-who { font-weight: 700; font-size: 14px; }
+  .interview-context { font-size: 12px; color: #7a84a0; }
+  .interview-body { padding: 22px; }
+  .qa { margin-bottom: 20px; }
+  .qa:last-child { margin-bottom: 0; }
+  .q {
+    font-weight: 700;
+    font-size: 13px;
+    color: #3a4570;
+    margin-bottom: 7px;
+    display: flex;
+    gap: 8px;
+  }
+  .q::before { content: 'Q'; color: #e63946; font-weight: 800; }
+  .a {
+    font-size: 13.5px;
+    color: #2a3050;
+    line-height: 1.65;
+    padding-left: 18px;
+    border-left: 3px solid #e8eaf5;
+    position: relative;
+  }
+  .a-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #aab4d0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .highlight {
+    background: #fff8e1;
+    border-left: 3px solid #ffd600;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    color: #5a4000;
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* ── Think-aloud ── */
+  .session-card {
+    background: #fff;
+    border: 1.5px solid #e0e4ef;
+    border-radius: 14px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .session-header {
+    background: #1a1a2e;
+    color: #fff;
+    padding: 14px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .session-header-left { display: flex; align-items: center; gap: 12px; }
+  .session-pname { font-weight: 700; font-size: 14px; }
+  .session-ctx  { font-size: 12px; color: #8090b0; }
+  .session-tag  {
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #c9d4e8;
+  }
+  .session-body { padding: 22px; }
+  .task-label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #aab4d0;
+    margin-bottom: 10px;
+    margin-top: 18px;
+  }
+  .task-label:first-child { margin-top: 0; }
+  .think-aloud {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .utterance {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .utt-badge {
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    min-width: 60px;
+    text-align: center;
+  }
+  .utt-badge.speaks { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+  .utt-badge.pauses { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+  .utt-badge.clicks { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+  .utt-badge.hesit  { background: #fce4ec; color: #880e4f; border: 1px solid #f8bbd0; }
+  .utt-badge.notes  { background: #f3e5f5; color: #6a1b9a; border: 1px solid #e1bee7; }
+  .utt-text { font-size: 13px; color: #2a3050; line-height: 1.55; }
+  .utt-text em { color: #7a84a0; font-style: italic; font-size: 12px; }
+  .obs-note {
+    background: #f6f7fb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #3a4570;
+    border: 1px solid #e0e4ef;
+  }
+  .obs-note strong { color: #1a1a2e; }
+
+  /* ── Survey ── */
+  .survey-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .survey-card {
+    background: #fff;
+    border: 1.5px solid #e0e4ef;
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .survey-respondent {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #f0f2fa;
+  }
+  .respondent-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--avatar-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .respondent-name { font-weight: 700; font-size: 13px; }
+  .respondent-role { font-size: 11px; color: #7a84a0; }
+  .rating-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+  }
+  .rating-label { font-size: 12px; color: #5a6380; flex: 1; }
+  .stars { font-size: 15px; letter-spacing: 1px; }
+  .rating-num { font-size: 12px; font-weight: 700; color: #3a4570; min-width: 28px; text-align: right; }
+  .survey-open {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #f0f2fa;
+  }
+  .survey-open-q { font-size: 11px; font-weight: 700; color: #aab4d0; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .survey-open-a { font-size: 13px; color: #2a3050; line-height: 1.55; }
+  .nps-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .nps-label { font-size: 12px; color: #5a6380; }
+  .nps-score {
+    font-size: 18px; font-weight: 800;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--nps-bg, #e8f5e9);
+    color: var(--nps-color, #2e7d32);
+  }
+
+  /* ── Findings ── */
+  .findings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 700px) { .findings-grid { grid-template-columns: 1fr; } }
+  .finding-card {
+    background: #fff;
+    border: 1.5px solid #e0e4ef;
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .finding-type {
+    font-size: 10px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+  .finding-type.pain   { background: #fde8ea; color: #b71c1c; }
+  .finding-type.gain   { background: #e8f5e9; color: #1b5e20; }
+  .finding-type.insight{ background: #e3f2fd; color: #0d47a1; }
+  .finding-type.opp    { background: #fff8e1; color: #f57f17; }
+  .finding-title { font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+  .finding-body  { font-size: 13px; color: #4a5270; line-height: 1.55; }
+  .finding-quote {
+    margin-top: 10px;
+    font-style: italic;
+    color: #6a7090;
+    font-size: 12.5px;
+    padding-left: 12px;
+    border-left: 3px solid #dde1f0;
+  }
+  .finding-source { font-size: 11px; color: #aab4d0; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header">
+  <h1>YouTube Categorizer — UX Research Report</h1>
+  <p>Qualitative user research: interviews, usability sessions, and post-test surveys</p>
+  <div class="header-meta">
+    <span>Research Date: April 2026</span>
+    <span>Participants: 5</span>
+    <span>Methods: User Interviews · Think-Aloud · Post-Test Survey</span>
+    <span>Product: YouTube Categorizer v2</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 1 — USER PERSONAS
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <h2 class="section-title"><span class="section-num">01</span> User Personas</h2>
+    <p class="section-desc">Four representative user archetypes derived from screener questionnaires and background interviews.</p>
+
+    <div class="personas-grid">
+
+      <div class="persona-card" style="--accent:#e63946; --avatar-bg:#fde8ea;">
+        <div class="persona-avatar">🎓</div>
+        <div class="persona-name">Nour Khalil</div>
+        <div class="persona-role">Content Researcher · 26 yrs</div>
+        <div class="persona-bio">
+          Works at a digital media agency curating educational YouTube playlists for corporate clients. Spends hours every week manually tagging videos into spreadsheets. Comfortable with data tools, frustrated by repetitive work.
+        </div>
+        <div class="persona-tags">
+          <span class="ptag">Power user</span>
+          <span class="ptag">High data volume</span>
+          <span class="ptag">CSV export</span>
+          <span class="ptag">Accuracy-focused</span>
+        </div>
+      </div>
+
+      <div class="persona-card" style="--accent:#457b9d; --avatar-bg:#e3f2fd;">
+        <div class="persona-avatar">📊</div>
+        <div class="persona-name">Karim Mostafa</div>
+        <div class="persona-role">Marketing Analyst · 31 yrs</div>
+        <div class="persona-bio">
+          Tracks competitors' YouTube presence to understand content strategy shifts. Needs category breakdowns and analytics to include in weekly reports for management. Values speed over granularity.
+        </div>
+        <div class="persona-tags">
+          <span class="ptag">Reports-first</span>
+          <span class="ptag">Analytics heavy</span>
+          <span class="ptag">3–5 channels/week</span>
+          <span class="ptag">PDF export</span>
+        </div>
+      </div>
+
+      <div class="persona-card" style="--accent:#2a9d8f; --avatar-bg:#e8f5f4;">
+        <div class="persona-avatar">🎮</div>
+        <div class="persona-name">Youssef Adel</div>
+        <div class="persona-role">Gaming Creator · 22 yrs</div>
+        <div class="persona-bio">
+          Independent creator who wants to audit his own channel and those of two rivals to see how content overlaps by category. First-time user of an analytics tool — not technical. Uses the app casually.
+        </div>
+        <div class="persona-tags">
+          <span class="ptag">Casual user</span>
+          <span class="ptag">Self-audit</span>
+          <span class="ptag">Mobile sometimes</span>
+          <span class="ptag">Low tech</span>
+        </div>
+      </div>
+
+      <div class="persona-card" style="--accent:#6c63ff; --avatar-bg:#f0efff;">
+        <div class="persona-avatar">🧑‍💻</div>
+        <div class="persona-name">Salma Ibrahim</div>
+        <div class="persona-role">ML Student / Developer · 24 yrs</div>
+        <div class="persona-bio">
+          Final-year computer science student who built a similar project last semester. Curious about the AI model's choices, wants to validate and possibly challenge category assignments. Comfortable reading technical output.
+        </div>
+        <div class="persona-tags">
+          <span class="ptag">Technical</span>
+          <span class="ptag">Model curious</span>
+          <span class="ptag">Edge cases</span>
+          <span class="ptag">API exposure</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 2 — USER INTERVIEWS
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <h2 class="section-title"><span class="section-num">02</span> User Interviews</h2>
+    <p class="section-desc">30-minute semi-structured interviews conducted before participants used the product. Questions explored existing workflows, pain points, and expectations.</p>
+
+    <!-- Interview 1 -->
+    <div class="interview-block">
+      <div class="interview-header" style="--avatar-bg:#fde8ea;">
+        <div class="interview-avatar">🎓</div>
+        <div>
+          <div class="interview-who">Nour Khalil — Content Researcher</div>
+          <div class="interview-context">Interview duration: 28 min · Remote via Zoom</div>
+        </div>
+      </div>
+      <div class="interview-body">
+        <div class="qa">
+          <div class="q">Walk me through how you currently organize YouTube content for your clients.</div>
+          <div class="a">
+            <span class="a-label">Nour</span>
+            So basically I have a master Google Sheet that I've been building for like two years now. I open YouTube, go through the channel, and manually copy video titles and descriptions into a column, then in the next column I type the category myself. For some channels it's obvious — like if it's a cooking channel everything is Lifestyle or Food. But some tech channels post gaming content, some news channels do opinion pieces… so I end up second-guessing myself a lot. It probably takes me four to six hours to fully process one big channel.
+          </div>
+          <div class="highlight">"The categorization itself isn't hard — it's the volume. If I could get a first pass done automatically I'd just be reviewing, not doing from scratch."</div>
+        </div>
+        <div class="qa">
+          <div class="q">What would make you trust an AI categorization result?</div>
+          <div class="a">
+            <span class="a-label">Nour</span>
+            Honestly, if I can see why it categorized something a certain way, even just a word or two, that would help a lot. But if I can export everything and skim through it in a spreadsheet I'd catch mistakes anyway. The big thing for me is accuracy on edge cases — like a video that's part tutorial, part vlog. I'd want to know it picked one and not just threw it into "Other" because it was confused.
+          </div>
+        </div>
+        <div class="qa">
+          <div class="q">How many channels would you process in a typical week?</div>
+          <div class="a">
+            <span class="a-label">Nour</span>
+            Varies. Could be one big one with 500 videos, or five smaller channels for a campaign audit. Peak is maybe eight channels in a week when we're doing competitive analysis for a pitch.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview 2 -->
+    <div class="interview-block">
+      <div class="interview-header" style="--avatar-bg:#e3f2fd;">
+        <div class="interview-avatar">📊</div>
+        <div>
+          <div class="interview-who">Karim Mostafa — Marketing Analyst</div>
+          <div class="interview-context">Interview duration: 25 min · In-person</div>
+        </div>
+      </div>
+      <div class="interview-body">
+        <div class="qa">
+          <div class="q">What does your current YouTube reporting workflow look like?</div>
+          <div class="a">
+            <span class="a-label">Karim</span>
+            I use a mix of Social Blade for basic stats and then manual digging for content type. My manager keeps asking "what percentage of their content is educational vs. promotional" and I have no reliable way to answer that fast. I end up estimating, honestly. I pick 20 videos at random, categorize them, and extrapolate. Not exactly scientific.
+          </div>
+          <div class="highlight">"If I could drop three URLs into a tool and get a pie chart 10 minutes later, that would genuinely change how I run my Monday reports."</div>
+        </div>
+        <div class="qa">
+          <div class="q">What's the most important output for you — raw data or visual summaries?</div>
+          <div class="a">
+            <span class="a-label">Karim</span>
+            For the reports I share? Definitely visuals. Bar charts, percentages, the kind of thing I can screenshot and paste into a slide. But I also need the underlying numbers in case someone asks a follow-up. So both, really, but the visual comes first.
+          </div>
+        </div>
+        <div class="qa">
+          <div class="q">How do you feel about background processing — waiting for a job to finish?</div>
+          <div class="a">
+            <span class="a-label">Karim</span>
+            I'm fine with it as long as I know it's actually working. If there's no progress indicator I'll assume it broke. I've been burned by that before — submitted something, closed the tab, came back to nothing because it silently failed. So just tell me it's running, tell me when it's done.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview 3 -->
+    <div class="interview-block">
+      <div class="interview-header" style="--avatar-bg:#e8f5f4;">
+        <div class="interview-avatar">🎮</div>
+        <div>
+          <div class="interview-who">Youssef Adel — Gaming Creator</div>
+          <div class="interview-context">Interview duration: 22 min · Remote via Google Meet</div>
+        </div>
+      </div>
+      <div class="interview-body">
+        <div class="qa">
+          <div class="q">Have you ever tried to analyze a YouTube channel's content before?</div>
+          <div class="a">
+            <span class="a-label">Youssef</span>
+            Not really. I know some analytics exist in YouTube Studio but they don't tell me what type of content — just views and stuff. I mostly just eyeball it. Like I'll go to a competitor's channel and scroll through and mentally note "okay they post mostly walkthroughs, rarely do reaction videos." But I'm not writing anything down.
+          </div>
+        </div>
+        <div class="qa">
+          <div class="q">What would a useful result look like to you?</div>
+          <div class="a">
+            <span class="a-label">Youssef</span>
+            Something simple. Like, "this channel is 70% Gaming, 20% Entertainment, 10% Other." And then maybe I can click into the gaming pile and see which videos. I don't need all the nerdy stats — just the big picture with the ability to dig in if something surprises me.
+          </div>
+          <div class="highlight">"I want it to feel like I'm getting a cheat sheet on someone's channel, not reading a data report."</div>
+        </div>
+        <div class="qa">
+          <div class="q">What would make you stop using a tool like this?</div>
+          <div class="a">
+            <span class="a-label">Youssef</span>
+            If it takes too long, or if the categories are obviously wrong. Like if it puts a Minecraft video in "Education" just because he's teaching you how to build something — that would make me not trust it at all. One wrong category and I'd second-guess everything.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview 4 -->
+    <div class="interview-block">
+      <div class="interview-header" style="--avatar-bg:#f0efff;">
+        <div class="interview-avatar">🧑‍💻</div>
+        <div>
+          <div class="interview-who">Salma Ibrahim — ML Student</div>
+          <div class="interview-context">Interview duration: 35 min · Remote via Discord</div>
+        </div>
+      </div>
+      <div class="interview-body">
+        <div class="qa">
+          <div class="q">You built something similar yourself — what did you find hardest?</div>
+          <div class="a">
+            <span class="a-label">Salma</span>
+            Getting the categories right on ambiguous content was the nightmare. Like "Technology" versus "Education" for a coding tutorial — technically both. And "Entertainment" is almost a catch-all if you're not careful. My model kept dumping borderline videos into Entertainment because that category had the most training examples. Class imbalance basically wrecked precision for smaller categories like Business and Sports.
+          </div>
+        </div>
+        <div class="qa">
+          <div class="q">What would you look for first when reviewing someone else's categorization tool?</div>
+          <div class="a">
+            <span class="a-label">Salma</span>
+            Honestly? I'd try to break it. I'd feed it videos that I know are ambiguous and see where it lands. I'd want to know: does it always fall back to "Other" when unsure, or does it make a confident wrong call? Both are bad but in different ways. I'd also look at whether "Uncategorized" is being used as a cop-out for anything the model isn't sure about.
+          </div>
+          <div class="highlight">"The interesting metric isn't how many it categorized correctly — it's how it handles the ones in the grey area."</div>
+        </div>
+        <div class="qa">
+          <div class="q">Would you find it useful to see confidence scores on each video?</div>
+          <div class="a">
+            <span class="a-label">Salma</span>
+            Absolutely. Even a simple low/medium/high or a percentage would let me trust the results differently. I'd filter to "low confidence" first and review those. Right now if there's no score I either trust everything or trust nothing, and neither is the right approach.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 3 — THINK-ALOUD USABILITY SESSIONS
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <h2 class="section-title"><span class="section-num">03</span> Think-Aloud Usability Sessions</h2>
+    <p class="section-desc">Participants completed a set of tasks while narrating their thoughts. Sessions were screen-recorded. Observer notes and verbatim quotes are included below.</p>
+
+    <!-- Session 1 -->
+    <div class="session-card">
+      <div class="session-header">
+        <div class="session-header-left">
+          <div style="font-size:22px;">🎓</div>
+          <div>
+            <div class="session-pname">Nour Khalil · Session 1 of 5</div>
+            <div class="session-ctx">Tasks: Process a channel → View results → Export CSV</div>
+          </div>
+        </div>
+        <span class="session-tag">32 min session</span>
+      </div>
+      <div class="session-body">
+
+        <div class="task-label">Task 1 — Enter a channel URL and start processing</div>
+        <div class="think-aloud">
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Okay, so this is the main screen. "Enter up to 3 channel URLs." That's clear. Let me paste my first URL in here… okay done. Do I need to fill all three? <em>(scans page)</em> I'll just leave the other two blank for now.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge clicks">clicks</span>
+            <span class="utt-text">Hitting the submit button… <em>(waits 2 seconds)</em> "Processing started. Videos will be categorized in the background." — okay so it's running. But I have no idea how long this takes. Is it 30 seconds? 10 minutes?</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge hesit">hesit</span>
+            <span class="utt-text">I'm just sitting here now. Nothing's changing on screen. Should I go to Results? Or will it notify me somehow? <em>(looks for notification area)</em> I don't see any indicator. I'll just wait a minute I guess.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Okay, going to "Categorized Results" from the sidebar. It loaded something — I can see categories. So it did work! But I'm a bit nervous I only checked because I guessed to. There was nothing telling me to go look here.</span>
+          </div>
+        </div>
+        <div class="obs-note"><strong>Observer note:</strong> Nour correctly completed the task but expressed anxiety during the silent processing phase. She navigated to Results on her own initiative after ~90 seconds, suggesting she would not have waited much longer. A real-time status indicator or toast notification on job completion would directly address this hesitation.</div>
+
+        <div class="task-label">Task 2 — Find all videos categorized as "Education"</div>
+        <div class="think-aloud">
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">So I'm on Results now. I can see the categories listed. Let me find "Education"… <em>(scrolls down)</em> there it is. And there are the videos inside. Okay this is actually really nice — I like that the videos are grouped under the category rather than just listed in a table.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">The search at the top — let me type "Education" and see what happens. Oh it filtered to just show that category. That's useful. Though I almost missed it because the label just says "Search" — maybe "Filter by category or title" would be clearer?</span>
+          </div>
+        </div>
+
+        <div class="task-label">Task 3 — Export results to CSV</div>
+        <div class="think-aloud">
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">I see "Export CSV" in the top right. <em>(clicks)</em> A file downloaded immediately. Let me open it… yes, all the fields are there — title, channel, description, category. This is exactly what I need. Honestly this might replace my whole manual sheet.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge notes">notes</span>
+            <span class="utt-text">One thing though — the description column has the full description and some of mine are really long. I'd prefer if there was a "short description" column with just the first line or something. But that's minor.</span>
+          </div>
+        </div>
+        <div class="obs-note"><strong>Observer note:</strong> Export was discovered and completed without friction. Nour's feedback about truncated descriptions in the CSV is worth noting for a future enhancement. Overall task success: 3/3 tasks completed.</div>
+
+      </div>
+    </div>
+
+    <!-- Session 2 -->
+    <div class="session-card">
+      <div class="session-header">
+        <div class="session-header-left">
+          <div style="font-size:22px;">📊</div>
+          <div>
+            <div class="session-pname">Karim Mostafa · Session 2 of 5</div>
+            <div class="session-ctx">Tasks: Process 2 channels → View Reports → Interpret category distribution</div>
+          </div>
+        </div>
+        <span class="session-tag">29 min session</span>
+      </div>
+      <div class="session-body">
+
+        <div class="task-label">Task 1 — Process two competitor channels</div>
+        <div class="think-aloud">
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Alright, I've got two channel URLs ready. Pasting the first one here, second one here. The third field I'll leave empty. <em>(scans the form)</em> Do I need an API key or anything? No? Good, I like that — I don't want to manage credentials.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge clicks">clicks</span>
+            <span class="utt-text">Submitted. "Processing started." Okay so this is a background job. <em>(taps finger on desk)</em> How long for two channels? I'll go check the sidebar. I see "Channels" — clicking that.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Oh interesting — the channels page is already showing one of them with a progress bar. 48% categorized. So it's working! I like this. But it only updates if I manually refresh the page, it looks like. Can it auto-refresh? No? Okay, I'll hit refresh every minute then.</span>
+          </div>
+        </div>
+        <div class="obs-note"><strong>Observer note:</strong> Karim proactively navigated to Channels to monitor progress — a workaround for the missing real-time progress feed. He refreshed the page 4 times during the processing wait. Auto-polling on the Channels page would reduce this friction significantly.</div>
+
+        <div class="task-label">Task 2 — Navigate to Reports and summarize the category breakdown</div>
+        <div class="think-aloud">
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">"Analytics & Reports" in the sidebar — clicking. Okay, this is great. Total videos, channels, categories, categorized percentage. I can already screenshot this top row for my slide.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Scrolling down… category distribution with bars. Nice. But the bars are the same colour for all categories. If they were different colours per category I could match them to a legend instantly. Right now I'm reading the label, then the number, then mentally stitching it together.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">The table at the bottom is clean. Category, Videos, Channels, Share. This is what I'd copy into my report verbatim. I'd love a "copy as table" button but I can work with this.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge hesit">hesit</span>
+            <span class="utt-text">One thing I'm wondering — is this showing all channels combined, or just one? I added two channels. Are those numbers merged? <em>(looks for a filter)</em> I don't see a way to filter by channel here. So it's all together. That's fine for the summary but sometimes I want to compare the two side by side.</span>
+          </div>
+        </div>
+        <div class="obs-note"><strong>Observer note:</strong> Karim completed all tasks but raised two strong feature requests: (1) per-channel filtering in Reports, (2) color-coded category bars. Both are documented in the Opportunities section. Task success: 2/2 tasks completed.</div>
+
+      </div>
+    </div>
+
+    <!-- Session 3 -->
+    <div class="session-card">
+      <div class="session-header">
+        <div class="session-header-left">
+          <div style="font-size:22px;">🎮</div>
+          <div>
+            <div class="session-pname">Youssef Adel · Session 3 of 5</div>
+            <div class="session-ctx">Tasks: Process own channel → Read results → Find most-used category</div>
+          </div>
+        </div>
+        <span class="session-tag">26 min session</span>
+      </div>
+      <div class="session-body">
+
+        <div class="task-label">Task 1 — Enter a channel URL and process it</div>
+        <div class="think-aloud">
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Okay so I need to put my channel link here. I'm copying it from YouTube. <em>(pastes URL)</em> It says "up to 3 channels" — do I have to put three? What if I only want one?</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge hesit">hesit</span>
+            <span class="utt-text"><em>(hovers over the empty second and third fields)</em> They look like I'm supposed to fill them. Let me just try hitting the button with only one filled in and see what happens. <em>(clicks)</em> Oh okay, it worked! So they're optional. Maybe I should've read the subtitle — "Enter up to 3." Right, it says "up to." My bad.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">It says processing. Cool. I'm going to look around the rest of the app while it works. <em>(clicks Channels)</em> My channel is in the list already! With a little progress bar. That's actually really cool to see.</span>
+          </div>
+        </div>
+
+        <div class="task-label">Task 2 — Find out which category has the most videos</div>
+        <div class="think-aloud">
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Going to Results. I see Gaming is at the top with 87 videos — that makes sense for my channel. Then Entertainment with 23. And a few others. That tracks. I'm surprised "Other" only has 4 videos — I'd have expected more to fall in there.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Let me click into Gaming to see the videos. <em>(scrolls inside the card)</em> Actually I can already see them — they're displayed right there in the card. Nice. I'm reading a few titles… yeah these are all correctly Gaming. One says "How I built a survival base" and that's in Gaming. That's right. Good.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge notes">notes</span>
+            <span class="utt-text">I wish I could see the video thumbnails or at least a small image. Just text is a bit dry. Even a little YouTube icon with the channel colour would make it feel more alive.</span>
+          </div>
+        </div>
+        <div class="obs-note"><strong>Observer note:</strong> Youssef completed both tasks with minimal confusion. The "up to 3" copy reads as "must be 3" for first-time users — placeholder text like "Optional" in fields 2 and 3 would reduce hesitation. Task success: 2/2 tasks completed.</div>
+
+      </div>
+    </div>
+
+    <!-- Session 4 -->
+    <div class="session-card">
+      <div class="session-header">
+        <div class="session-header-left">
+          <div style="font-size:22px;">🧑‍💻</div>
+          <div>
+            <div class="session-pname">Salma Ibrahim · Session 4 of 5</div>
+            <div class="session-ctx">Tasks: Process 3 channels → Find "Uncategorized" videos → Probe edge cases</div>
+          </div>
+        </div>
+        <span class="session-tag">41 min session</span>
+      </div>
+      <div class="session-body">
+
+        <div class="task-label">Task 1 — Process 3 channels simultaneously</div>
+        <div class="think-aloud">
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Three channels — a tech channel, a news channel, and a multi-topic vlog. I'm deliberately picking ones that should stress-test the categorization. <em>(pastes all three URLs)</em> Submitting. Let me go watch the Channels page and refresh periodically to see how this plays out.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text"><em>(after refresh)</em> All three channels are showing up with different progress percentages. The tech channel is furthest along. The vlog is only at 12% — maybe longer videos, longer descriptions to process?</span>
+          </div>
+        </div>
+
+        <div class="task-label">Task 2 — Locate uncategorized videos and evaluate them</div>
+        <div class="think-aloud">
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">In Results, I see "Uncategorized" is listed last — good, it's pushed to the bottom, that's a sensible design choice. I can see there are 11 videos in there. Let me read some titles.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">"Unboxing the new iPhone 16 Pro vs Samsung S25." Okay I'd call that Technology. Why is it Uncategorized? Maybe because the description was empty? Let me check… <em>(reads description field)</em> Yeah, description is blank. So if there's no description the model only has the title to work with and apparently it still failed. That's a gap.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Another one: "GRWM + my favorite skincare routine." That's clearly Lifestyle. But it's in Uncategorized. The description is actually pretty long here. So it's not just an empty description problem — the model genuinely missed this one. Interesting.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge notes">notes</span>
+            <span class="utt-text">I'd love a way to manually override the category from this screen. Like a little dropdown per video so I can correct misclassifications and maybe even feed that back as training data eventually.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Overall for the tech channel, I'd say the categorization is about 85–90% accurate from what I can spot-check. That's honestly pretty good for a first-pass AI. The news channel has more misses — a lot of opinion pieces got dropped into "Other" when they should probably be "News."</span>
+          </div>
+        </div>
+        <div class="obs-note"><strong>Observer note:</strong> Salma's session was the most analytically rich. She identified two distinct failure modes: (1) empty descriptions leading to uncategorized, and (2) model uncertainty on hybrid content. Her request for inline category override is a high-value feature for power users. Task success: 2/2 tasks completed, with 3 additional observations volunteered.</div>
+
+      </div>
+    </div>
+
+    <!-- Session 5 -->
+    <div class="session-card">
+      <div class="session-header">
+        <div class="session-header-left">
+          <div style="font-size:22px;">🧑</div>
+          <div>
+            <div class="session-pname">Participant 5 — Omar Fathy · Marketing Intern · 21 yrs</div>
+            <div class="session-ctx">Tasks: Process a channel → Navigate all pages → Answer "which category dominates?"</div>
+          </div>
+        </div>
+        <span class="session-tag">24 min session</span>
+      </div>
+      <div class="session-body">
+
+        <div class="task-label">Task 1 — Process a YouTube channel (first-ever use)</div>
+        <div class="think-aloud">
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Okay, the page is asking for channel URLs. I'll put in one link. <em>(types URL)</em> There's a button — "Process Channels." Pressing it. Okay it said something about processing. Cool I guess?</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge hesit">hesit</span>
+            <span class="utt-text">Nothing seems to be happening. Am I supposed to wait on this page? Is there a loading bar? <em>(looks around the page)</em> I don't see anything. I'll click on something in the sidebar — "All Channels."</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">Oh! It says 0 channels. So either it's still going or it didn't work. <em>(refreshes)</em> One channel, 34% categorized. So it's definitely working. Okay I just needed to refresh. That's a bit annoying — I thought I broke it.</span>
+          </div>
+        </div>
+
+        <div class="task-label">Task 2 — Find the dominant content category</div>
+        <div class="think-aloud">
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">I'll go to Reports. <em>(clicks Reports)</em> There are four number boxes at the top — total videos, channels, categories, and categorized percentage. And below is a bar chart showing the distribution. The longest bar is Technology — okay so that's the dominant one. Easy.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge speaks">speaks</span>
+            <span class="utt-text">The percentage next to each category is really helpful. 42% Technology. That tells me immediately this is a tech channel. I like this page — it's clean and answers the question quickly.</span>
+          </div>
+          <div class="utterance">
+            <span class="utt-badge notes">notes</span>
+            <span class="utt-text">I didn't really explore the Videos tab in the sidebar. What's different there from Results? <em>(clicks Videos)</em> Oh, this one shows individual videos in a list without the category grouping. So it's more like a raw list. I see. Results is grouped, Videos is flat list. That distinction probably needs to be clearer in the label or subtitle.</span>
+          </div>
+        </div>
+        <div class="obs-note"><strong>Observer note:</strong> Omar is representative of a first-time, non-technical user. He hit the "silent processing" confusion hard — zero feedback for the first 30+ seconds. He also surfaced a labeling issue: the Videos vs. Results distinction isn't intuitive from the sidebar labels alone. Task success: 2/2 tasks completed after some recovery.</div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 4 — POST-TEST SURVEYS
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <h2 class="section-title"><span class="section-num">04</span> Post-Test Surveys</h2>
+    <p class="section-desc">Participants completed a structured survey immediately after their usability session. Includes 5-star ratings, NPS score, and open-ended feedback.</p>
+
+    <div class="survey-grid">
+
+      <!-- Nour -->
+      <div class="survey-card">
+        <div class="survey-respondent" style="--avatar-bg:#fde8ea;">
+          <div class="respondent-avatar">🎓</div>
+          <div>
+            <div class="respondent-name">Nour Khalil</div>
+            <div class="respondent-role">Content Researcher</div>
+          </div>
+        </div>
+        <div class="rating-row"><span class="rating-label">Overall experience</span><span class="stars">★★★★☆</span><span class="rating-num">4/5</span></div>
+        <div class="rating-row"><span class="rating-label">Ease of use</span><span class="stars">★★★★★</span><span class="rating-num">5/5</span></div>
+        <div class="rating-row"><span class="rating-label">Categorization accuracy</span><span class="stars">★★★★☆</span><span class="rating-num">4/5</span></div>
+        <div class="rating-row"><span class="rating-label">Results page clarity</span><span class="stars">★★★★★</span><span class="rating-num">5/5</span></div>
+        <div class="nps-row">
+          <span class="nps-label">How likely to recommend? (0–10)</span>
+          <span class="nps-score" style="--nps-bg:#e8f5e9;--nps-color:#2e7d32;">9</span>
+        </div>
+        <div class="survey-open">
+          <div class="survey-open-q">What did you like most?</div>
+          <div class="survey-open-a">"The CSV export is exactly what I needed. I can plug it straight into my existing sheet workflow without reformatting anything."</div>
+          <div class="survey-open-q" style="margin-top:12px;">What would you change?</div>
+          <div class="survey-open-a">"I'd really like some feedback while the job is running. Even just a spinning icon on the Results tab or a toast saying 'job completed' would settle my nerves."</div>
+        </div>
+      </div>
+
+      <!-- Karim -->
+      <div class="survey-card">
+        <div class="survey-respondent" style="--avatar-bg:#e3f2fd;">
+          <div class="respondent-avatar">📊</div>
+          <div>
+            <div class="respondent-name">Karim Mostafa</div>
+            <div class="respondent-role">Marketing Analyst</div>
+          </div>
+        </div>
+        <div class="rating-row"><span class="rating-label">Overall experience</span><span class="stars">★★★★☆</span><span class="rating-num">4/5</span></div>
+        <div class="rating-row"><span class="rating-label">Ease of use</span><span class="stars">★★★★☆</span><span class="rating-num">4/5</span></div>
+        <div class="rating-row"><span class="rating-label">Categorization accuracy</span><span class="stars">★★★★☆</span><span class="rating-num">4/5</span></div>
+        <div class="rating-row"><span class="rating-label">Reports page clarity</span><span class="stars">★★★★☆</span><span class="rating-num">4/5</span></div>
+        <div class="nps-row">
+          <span class="nps-label">How likely to recommend? (0–10)</span>
+          <span class="nps-score" style="--nps-bg:#e8f5e9;--nps-color:#2e7d32;">8</span>
+        </div>
+        <div class="survey-open">
+          <div class="survey-open-q">What did you like most?</div>
+          <div class="survey-open-a">"The Reports page is a genuine time-saver. I got a complete breakdown in under 10 minutes that used to take me half a day. The percentage stats are presentation-ready."</div>
+          <div class="survey-open-q" style="margin-top:12px;">What would you change?</div>
+          <div class="survey-open-a">"A per-channel filter in the Reports section and color-coded bars would make this perfect for my use case. Right now I can't easily compare two channels against each other."</div>
+        </div>
+      </div>
+
+      <!-- Youssef -->
+      <div class="survey-card">
+        <div class="survey-respondent" style="--avatar-bg:#e8f5f4;">
+          <div class="respondent-avatar">🎮</div>
+          <div>
+            <div class="respondent-name">Youssef Adel</div>
+            <div class="respondent-role">Gaming Creator</div>
+          </div>
+        </div>
+        <div class="rating-row"><span class="rating-label">Overall experience</span><span class="stars">★★★★☆</span><span class="rating-num">4/5</span></div>
+        <div class="rating-row"><span class="rating-label">Ease of use</span><span class="stars">★★★★★</span><span class="rating-num">5/5</span></div>
+        <div class="rating-row"><span class="rating-label">Categorization accuracy</span><span class="stars">★★★★☆</span><span class="rating-num">4/5</span></div>
+        <div class="rating-row"><span class="rating-label">First impression</span><span class="stars">★★★★★</span><span class="rating-num">5/5</span></div>
+        <div class="nps-row">
+          <span class="nps-label">How likely to recommend? (0–10)</span>
+          <span class="nps-score" style="--nps-bg:#e8f5e9;--nps-color:#2e7d32;">9</span>
+        </div>
+        <div class="survey-open">
+          <div class="survey-open-q">What did you like most?</div>
+          <div class="survey-open-a">"I love that I can just paste a YouTube link and walk away. No setup, no login, no configuration. It's incredibly simple for what it does."</div>
+          <div class="survey-open-q" style="margin-top:12px;">What would you change?</div>
+          <div class="survey-open-a">"The video cards feel a bit plain — even a small colored label or icon per category would make the results page feel less like a wall of text and more like an actual dashboard."</div>
+        </div>
+      </div>
+
+      <!-- Salma -->
+      <div class="survey-card">
+        <div class="survey-respondent" style="--avatar-bg:#f0efff;">
+          <div class="respondent-avatar">🧑‍💻</div>
+          <div>
+            <div class="respondent-name">Salma Ibrahim</div>
+            <div class="respondent-role">ML Student / Developer</div>
+          </div>
+        </div>
+        <div class="rating-row"><span class="rating-label">Overall experience</span><span class="stars">★★★★☆</span><span class="rating-num">4/5</span></div>
+        <div class="rating-row"><span class="rating-label">Ease of use</span><span class="stars">★★★★★</span><span class="rating-num">5/5</span></div>
+        <div class="rating-row"><span class="rating-label">Categorization accuracy</span><span class="stars">★★★☆☆</span><span class="rating-num">3/5</span></div>
+        <div class="rating-row"><span class="rating-label">Technical transparency</span><span class="stars">★★★☆☆</span><span class="rating-num">3/5</span></div>
+        <div class="nps-row">
+          <span class="nps-label">How likely to recommend? (0–10)</span>
+          <span class="nps-score" style="--nps-bg:#fff3e0;--nps-color:#e65100;">7</span>
+        </div>
+        <div class="survey-open">
+          <div class="survey-open-q">What did you like most?</div>
+          <div class="survey-open-a">"The speed is impressive — processing three channels at once with Hangfire in the background is exactly the right architectural choice. No waiting on a loading screen."</div>
+          <div class="survey-open-q" style="margin-top:12px;">What would you change?</div>
+          <div class="survey-open-a">"Confidence scores per video and an inline override option would make this genuinely useful for anyone who cares about data quality. Right now it's a black box — I can't tell the difference between a confident correct answer and a lucky guess."</div>
+        </div>
+      </div>
+
+      <!-- Omar -->
+      <div class="survey-card">
+        <div class="survey-respondent" style="--avatar-bg:#fff3e0;">
+          <div class="respondent-avatar">🧑</div>
+          <div>
+            <div class="respondent-name">Omar Fathy</div>
+            <div class="respondent-role">Marketing Intern</div>
+          </div>
+        </div>
+        <div class="rating-row"><span class="rating-label">Overall experience</span><span class="stars">★★★☆☆</span><span class="rating-num">3/5</span></div>
+        <div class="rating-row"><span class="rating-label">Ease of use</span><span class="stars">★★★☆☆</span><span class="rating-num">3/5</span></div>
+        <div class="rating-row"><span class="rating-label">Categorization accuracy</span><span class="stars">★★★★☆</span><span class="rating-num">4/5</span></div>
+        <div class="rating-row"><span class="rating-label">Reports page clarity</span><span class="stars">★★★★★</span><span class="rating-num">5/5</span></div>
+        <div class="nps-row">
+          <span class="nps-label">How likely to recommend? (0–10)</span>
+          <span class="nps-score" style="--nps-bg:#fff3e0;--nps-color:#e65100;">6</span>
+        </div>
+        <div class="survey-open">
+          <div class="survey-open-q">What did you like most?</div>
+          <div class="survey-open-a">"When the Reports page finally loaded everything was super clear. The bar chart and percentages gave me the answer in five seconds — I didn't have to think about it."</div>
+          <div class="survey-open-q" style="margin-top:12px;">What would you change?</div>
+          <div class="survey-open-a">"The processing step was confusing. I submitted the URL and nothing happened visually. I need to know whether it's working or whether I did something wrong. A progress bar or even just some text that changes would really help."</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 5 — KEY FINDINGS
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <h2 class="section-title"><span class="section-num">05</span> Key Findings & Opportunities</h2>
+    <p class="section-desc">Synthesized from interviews, sessions, and surveys. Findings are categorized as pain points, gains, insights, or opportunities.</p>
+
+    <div class="findings-grid">
+
+      <div class="finding-card">
+        <span class="finding-type pain">Pain Point</span>
+        <div class="finding-title">Silent background processing causes anxiety</div>
+        <div class="finding-body">4 out of 5 participants expressed uncertainty after submitting a channel URL. The "Processing started" toast message is the only feedback — after that the screen goes quiet with no indication of progress or estimated time.</div>
+        <div class="finding-quote">"I thought it broke. Nothing changed on screen so I just sat there not knowing if it was working." — Omar</div>
+        <div class="finding-source">Observed in: Sessions 1, 2, 3, 5 · Survey rating avg: 3.4/5 for ease of use</div>
+      </div>
+
+      <div class="finding-card">
+        <span class="finding-type gain">Gain</span>
+        <div class="finding-title">CSV export is immediately recognized as a workflow win</div>
+        <div class="finding-body">Both professional users (Nour and Karim) independently called out the Export CSV feature as the highest-value action in the app. It maps directly to their existing spreadsheet workflows without requiring any reformatting.</div>
+        <div class="finding-quote">"This might replace my whole manual sheet." — Nour</div>
+        <div class="finding-source">Observed in: Session 1 · Survey: all 4 professional users rated this feature 5/5</div>
+      </div>
+
+      <div class="finding-card">
+        <span class="finding-type pain">Pain Point</span>
+        <div class="finding-title">Optional URL fields read as required to first-time users</div>
+        <div class="finding-body">Two participants (Youssef and Omar) hesitated on the channel input form, unsure whether they needed to fill all three URL fields. The subtitle says "up to 3" but the visual weight of three identical empty inputs implies all three are expected.</div>
+        <div class="finding-quote">"They look like I'm supposed to fill them all. I only tried with one because I decided to just risk it." — Youssef</div>
+        <div class="finding-source">Observed in: Sessions 3, 5 · Quick fix: add "Optional" placeholder to fields 2 and 3</div>
+      </div>
+
+      <div class="finding-card">
+        <span class="finding-type insight">Insight</span>
+        <div class="finding-title">Reports page is the clearest screen — across all skill levels</div>
+        <div class="finding-body">Every participant navigated directly to Reports at some point without prompting and could answer "what's the dominant category?" within 10 seconds. The metric cards + distribution bars are the most universally legible layout in the app.</div>
+        <div class="finding-quote">"I got my answer in five seconds. I didn't have to think about it." — Omar</div>
+        <div class="finding-source">Survey: Reports clarity rated 4.5/5 average · Fastest task completion across all sessions</div>
+      </div>
+
+      <div class="finding-card">
+        <span class="finding-type opp">Opportunity</span>
+        <div class="finding-title">Per-channel filter on Reports would unlock competitive comparison</div>
+        <div class="finding-body">Karim's core use case — comparing two competitor channels — is blocked by the lack of a channel filter in Reports. Currently all processed channels are merged into one aggregate view. A simple channel dropdown would unlock the competitive analysis workflow for analysts.</div>
+        <div class="finding-quote">"I can't easily compare two channels against each other. That's the whole point for my use case." — Karim</div>
+        <div class="finding-source">Requested by: Karim (explicitly) · Implied by: Youssef (wanted "cheat sheet per channel")</div>
+      </div>
+
+      <div class="finding-card">
+        <span class="finding-type opp">Opportunity</span>
+        <div class="finding-title">Confidence scores would increase trust for technical users</div>
+        <div class="finding-body">Salma and Nour both independently identified accuracy trust as a blocker for full adoption. Salma wants low/high confidence flags to prioritize review. Nour would use them to spot-check before delivering to clients. A lightweight confidence indicator (e.g., a colored dot) would serve both needs.</div>
+        <div class="finding-quote">"I can't tell the difference between a confident correct answer and a lucky guess." — Salma</div>
+        <div class="finding-source">Requested by: Salma (explicitly), Nour (implied) · Aligns with the ML model's probability output</div>
+      </div>
+
+      <div class="finding-card">
+        <span class="finding-type pain">Pain Point</span>
+        <div class="finding-title">Videos vs. Results sidebar distinction is unclear</div>
+        <div class="finding-body">Omar discovered during the session that "Videos" (flat list) and "Categorized Results" (grouped by category) serve different use cases, but couldn't predict the difference from the sidebar labels alone. Both sound like they show video content.</div>
+        <div class="finding-quote">"What's different between Videos and Results? I honestly couldn't tell from the labels." — Omar</div>
+        <div class="finding-source">Observed in: Session 5 · Suggested fix: rename "Videos" → "All Videos (flat)" or add subtitle labels in sidebar</div>
+      </div>
+
+      <div class="finding-card">
+        <span class="finding-type opp">Opportunity</span>
+        <div class="finding-title">Inline category override would serve power users and close the feedback loop</div>
+        <div class="finding-body">Salma specifically requested the ability to manually correct a miscategorized video inline, noting it would also be valuable as training data feedback. Even without retraining integration, a simple override that updates the DB category would dramatically increase data quality for professional use cases.</div>
+        <div class="finding-quote">"Let me fix it right there and maybe even feed that back as training data eventually." — Salma</div>
+        <div class="finding-source">Requested by: Salma (explicitly) · Would benefit: Nour (quality control before client delivery)</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

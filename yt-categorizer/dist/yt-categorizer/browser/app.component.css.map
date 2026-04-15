@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;95647f3dee92f1264f72555554e81d7d00224e26d71a0da60eb3d90eb639b3ed;F:/Amr/FEHU - CSE/4th CSE/1st Term/Machine Learning/YouTubeCategorizer/yt-categorizer/src/app/app.component.ts"],
+  "sourcesContent": ["\n    .app-shell { display: flex; min-height: 100vh; }\n    .main { flex: 1; min-width: 0; overflow-y: auto; }\n  "],
+  "mappings": ";AACI,CAAC;AAAY,WAAS;AAAM,cAAY;AAAO;AAC/C,CAAC;AAAO,QAAM;AAAG,aAAW;AAAG,cAAY;AAAM;",
+  "names": []
+}

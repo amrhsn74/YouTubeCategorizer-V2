@@ -83,7 +83,7 @@ namespace YouTubeCategorizer.Application.Services
                 var categoryCache = new ConcurrentDictionary<string, Category>(
                     allCategories.ToDictionary(c => c.Label, c => c));
 
-                var semaphore = new SemaphoreSlim(5);
+                var semaphore = new SemaphoreSlim(15); // Increased from 5 to 15 for better concurrency
                 var videosToAdd = new ConcurrentBag<Video>();
 
                 var tasks = newVideosToProcess.Select(async videoData =>
@@ -193,7 +193,9 @@ namespace YouTubeCategorizer.Application.Services
                         CategoryLabel = v.Category.Label
                     }).ToList()
                 })
-                .OrderBy(c => c.Label)
+                // Sort: Categorized first (excluding "Uncategorized"), then "Uncategorized" last
+                .OrderBy(c => c.Label == "Uncategorized" ? 1 : 0) // "Uncategorized" gets 1, others get 0
+                .ThenBy(c => c.Label)
                 .ToList();
 
             return new CategorizedVideosDto { Categories = groupedByCategory };

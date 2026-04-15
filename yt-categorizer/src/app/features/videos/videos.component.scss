@@ -1,0 +1,93 @@
+/* Page size buttons */
+.size-buttons {
+  display: flex;
+  gap: 4px;
+
+  button {
+    flex: 1;
+    padding: 7px 10px;
+    border: 1.5px solid var(--border-strong);
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    font-family: var(--font-primary);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover { background: var(--surface-2); color: var(--primary); border-color: var(--primary); }
+
+    &.active {
+      background: var(--gradient-primary);
+      color: white;
+      border-color: transparent;
+      font-weight: 600;
+    }
+  }
+}
+
+/* Table */
+.table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+
+    th {
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: var(--surface-2); }
+
+    td { padding: 11px 14px; font-size: 13px; }
+  }
+}
+
+.col-num     { width: 48px; }
+.col-title   { width: 28%; }
+.col-channel { width: 18%; }
+.col-cat     { width: 14%; }
+.col-desc    { width: auto; }
+
+.num-cell  { color: var(--text-subtle); font-weight: 600; font-family: var(--font-mono); }
+.ch-cell   { color: var(--text-muted); }
+.desc-cell { color: var(--text-subtle); font-size: 12px; }
+
+.cat-badge {
+  display: inline-block;
+  background: rgba(153, 15, 250, 0.09);
+  color: var(--primary);
+  border: 1px solid rgba(153, 15, 250, 0.2);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
