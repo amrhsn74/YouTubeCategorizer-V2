@@ -32,8 +32,9 @@ YouTube Categorizer is a full-stack project that fetches videos from YouTube cha
 - `YouTubeCategorizer.Application/` - services and business logic
 - `YouTubeCategorizer.Core/` - domain entities and interfaces
 - `YouTubeCategorizer.Infrastructure/` - EF Core DbContext, repositories, migrations
-- `yt-categorizer/` - Angular frontend
-- `ML_Model/` - Python ML artifacts and API experiments (optional/standalone)
+- `Frontend/` - Angular 21 frontend (standalone components)
+- `ML_Model/` - Python ML notebooks, trained models, and Flask API for offline categorization
+- `Attachements/` - Project attachments (wireframes, SQL scripts, research data)
 
 ## Prerequisites
 
@@ -64,7 +65,7 @@ dotnet restore
 ```
 
 ```bash
-cd yt-categorizer
+cd Frontend
 npm install
 cd ..
 ```
@@ -91,13 +92,13 @@ Useful dev endpoints:
 ### 4) Run Angular frontend
 
 ```bash
-cd yt-categorizer
+cd Frontend
 npm start
 ```
 
 Frontend default URL: `http://localhost:4200`
 
-The Angular dev server proxies `/api` and `/hangfire` to `http://localhost:5010` using `yt-categorizer/proxy.conf.json`.
+The Angular dev server proxies `/api` and `/hangfire` to `http://localhost:5010` using `Frontend/proxy.conf.json`.
 
 ## API Endpoints (Current)
 
