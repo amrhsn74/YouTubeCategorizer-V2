@@ -1,0 +1,39 @@
+<header class="topbar">
+  <div class="topbar-branding">
+    <div class="topbar-title">YouTube Categorizer</div>
+    <div class="topbar-subtitle">AI-powered video classification</div>
+  </div>
+
+  <div class="topbar-right">
+    <button class="btn btn-ghost btn-sm" (click)="refresh.emit()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5"
+           stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="1 4 1 10 7 10"/>
+        <path d="M3.51 15a9 9 0 1 0 .49-3.5"/>
+      </svg>
+      Refresh
+    </button>
+
+    <button class="btn btn-info btn-sm" (click)="openResultsInNewTab()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+        <polyline points="15 3 21 3 21 9"/>
+        <line x1="10" y1="14" x2="21" y2="3"/>
+      </svg>
+      Open Results
+    </button>
+
+    <button class="btn btn-primary btn-sm" (click)="newJob.emit()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5"
+           stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/>
+        <line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      New Job
+    </button>
+  </div>
+</header>

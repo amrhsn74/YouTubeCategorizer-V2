@@ -1,0 +1,146 @@
+<div class="page-body">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Analytics & Reports</h1>
+      <p class="page-subtitle">Analytics from the database</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" (click)="loadReports(true)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1 4 1 10 7 10"/>
+          <path d="M3.51 15a9 9 0 1 0 .49-3.5"/>
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner-lg"></div>
+      <p>Loading reports…</p>
+    </div>
+  }
+
+  @if (!loading && error) {
+    <div class="error-state">
+      <p class="error-title">Cannot connect to the API</p>
+      <p class="error-hint">Make sure the .NET API is running on port 5010 (<code>dotnet run</code> in the API project).</p>
+      <button class="btn btn-primary btn-sm" (click)="loadReports(true)">Retry</button>
+    </div>
+  }
+
+  @if (!loading && !error && metrics) {
+    <!-- Key metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-num">{{ metrics.totalVideos }}</div>
+        <div class="metric-lbl">Total Videos</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num">{{ metrics.totalChannels }}</div>
+        <div class="metric-lbl">Channels</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num">{{ metrics.totalCategories }}</div>
+        <div class="metric-lbl">Categories</div>
+      </div>
+      <div class="metric-card accent">
+        <div class="metric-num">{{ metrics.categorization }}%</div>
+        <div class="metric-lbl">Categorized</div>
+      </div>
+    </div>
+
+    <!-- Summary bars -->
+    <div class="section-card">
+      <h2 class="section-title">Categorization Summary</h2>
+      <div class="summary-row">
+        <div class="summary-item">
+          <div class="summary-head">
+            <span>Categorized</span>
+            <strong>{{ metrics.categorizedVideos }}</strong>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill success" [style.width.%]="metrics.categorization"></div>
+          </div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-head">
+            <span>Uncategorized</span>
+            <strong>{{ metrics.uncategorizedVideos }}</strong>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill danger" [style.width.%]="100 - metrics.categorization"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="averages">
+        <div class="avg-pill">
+          <span class="avg-num">{{ metrics.avgVideosPerCategory }}</span>
+          <span class="avg-lbl">Avg videos / category</span>
+        </div>
+        <div class="avg-pill">
+          <span class="avg-num">{{ metrics.avgVideosPerChannel }}</span>
+          <span class="avg-lbl">Avg videos / channel</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Distribution -->
+    <div class="section-card">
+      <h2 class="section-title">Category Distribution</h2>
+      <div class="distribution-list">
+        @for (cat of categoryReports; track cat.label) {
+          <div class="dist-item">
+            <div class="dist-head">
+              <span class="dist-name">{{ cat.label }}</span>
+              <div class="dist-badges">
+                <span class="badge">{{ cat.videoCount }} videos</span>
+                <span class="badge muted">{{ cat.channelCount }} channels</span>
+                <span class="badge accent">{{ cat.percentage }}%</span>
+              </div>
+            </div>
+            <div class="bar-track slim">
+              <div class="bar-fill primary" [style.width.%]="cat.percentage"
+                   [style.background]="getBarColor(cat.percentage)"></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Details table -->
+    <div class="section-card">
+      <h2 class="section-title">Category Details</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Videos</th>
+              <th>Channels</th>
+              <th>Share</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (cat of categoryReports; track cat.label) {
+              <tr>
+                <td class="td-name">{{ cat.label }}</td>
+                <td class="td-num">{{ cat.videoCount }}</td>
+                <td class="td-num">{{ cat.channelCount }}</td>
+                <td class="td-pct">
+                  <span class="pct-badge">{{ cat.percentage }}%</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+</div>
