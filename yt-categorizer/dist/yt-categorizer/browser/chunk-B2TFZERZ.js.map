@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/core/services/video.service.ts"],
-  "sourcesContent": ["import { Injectable } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { Observable } from 'rxjs';\nimport { CategorizedVideosDto, ChannelInputDto } from '../models/video.model';\n\n@Injectable({ providedIn: 'root' })\nexport class VideoService {\n  private readonly baseUrl = '/api/Videos';\n\n  constructor(private http: HttpClient) {}\n\n  processChannels(input: ChannelInputDto): Observable<{ message: string }> {\n    return this.http.post<{ message: string }>(`${this.baseUrl}/process`, input);\n  }\n\n  getCategorizedVideos(): Observable<CategorizedVideosDto> {\n    return this.http.get<CategorizedVideosDto>(`${this.baseUrl}/categorized`);\n  }\n}\n"],
-  "mappings": ";;;;;;;;;AAMM,IAAO,eAAP,MAAO,cAAY;EAGvB,YAAoB,MAAgB;AAAhB,SAAA,OAAA;AAFH,SAAA,UAAU;EAEY;EAEvC,gBAAgB,OAAsB;AACpC,WAAO,KAAK,KAAK,KAA0B,GAAG,KAAK,OAAO,YAAY,KAAK;EAC7E;EAEA,uBAAoB;AAClB,WAAO,KAAK,KAAK,IAA0B,GAAG,KAAK,OAAO,cAAc;EAC1E;;;uCAXW,eAAY,mBAAA,UAAA,CAAA;IAAA;EAAA;;4EAAZ,eAAY,SAAZ,cAAY,WAAA,YADC,OAAM,CAAA;EAAA;;;sEACnB,cAAY,CAAA;UADxB;WAAW,EAAE,YAAY,OAAM,CAAE;;;",
-  "names": []
-}

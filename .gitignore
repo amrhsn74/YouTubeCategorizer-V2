@@ -373,8 +373,26 @@ ML_Model/models/
 
 # Python Virtual Environment
 ML_Model/venv/
+ML_Model/api/venv/
+.venv/
 venv/
 env/
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# Large archives
+*.zip
+
+# Angular build output & cache
+dist/
+.angular/
+
+# Build logs
+build.log
+
+# Old frontend (replaced by Frontend/)
+yt-categorizer/
 
 # Environment Variables (Security risk)
 .env
