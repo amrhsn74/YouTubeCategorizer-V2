@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VideoService } from '../../core/services/video.service';
 import { PaginationService } from '../../core/services/pagination.service';
 import { CategorizedVideosDto } from '../../core/models/video.model';
-import { finalize } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { finalize, takeUntil } from 'rxjs/operators';
 
 interface ChannelSummary {
   name: string;
@@ -21,11 +22,13 @@ interface ChannelSummary {
   templateUrl: './channels.component.html',
   styleUrls: ['./channels.component.scss'],
 })
-export class ChannelsComponent implements OnInit {
+export class ChannelsComponent implements OnInit, OnDestroy {
   channels: ChannelSummary[] = [];
   loading = false;
   error = false;
+  private cancelRequest$ = new Subject<void>();
 
+  readonly pageSizeOptions = [5, 10, 15, 20];
   pageSize = 10;
   currentPage = 1;
   totalPages = 0;
@@ -45,11 +48,15 @@ export class ChannelsComponent implements OnInit {
   }
 
   loadData(forceRefresh = false): void {
+    this.cancelRequest$.next();
     this.loading = true;
     this.error = false;
 
     this.videoService.getCategorizedVideos(forceRefresh)
-      .pipe(finalize(() => { this.loading = false; }))
+      .pipe(
+        takeUntil(this.cancelRequest$),
+        finalize(() => { this.loading = false; })
+      )
       .subscribe({
         next: (data) => {
           this.extractChannelData(data);
@@ -58,6 +65,11 @@ export class ChannelsComponent implements OnInit {
         },
         error: () => { this.error = true; },
       });
+  }
+
+  ngOnDestroy(): void {
+    this.cancelRequest$.next();
+    this.cancelRequest$.complete();
   }
 
   private extractChannelData(data: CategorizedVideosDto): void {
@@ -97,6 +109,11 @@ export class ChannelsComponent implements OnInit {
 
   nextPage(): void { if (this.currentPage < this.totalPages) this.goToPage(this.currentPage + 1); }
   prevPage(): void { if (this.currentPage > 1) this.goToPage(this.currentPage - 1); }
+  changePageSize(newSize: number): void {
+    this.pageSize = newSize;
+    this.currentPage = 1;
+    this.updatePagination();
+  }
 
   applyFilter(): void {
     this.currentPage = 1;

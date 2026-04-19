@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, SlicePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { VideoService } from '../../core/services/video.service';
 import { PaginationService } from '../../core/services/pagination.service';
 import { CategorizedVideosDto, VideoDto } from '../../core/models/video.model';
-import { finalize } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { finalize, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-videos',
@@ -13,10 +14,11 @@ import { finalize } from 'rxjs/operators';
   templateUrl: './videos.component.html',
   styleUrls: ['./videos.component.scss'],
 })
-export class VideosComponent implements OnInit {
+export class VideosComponent implements OnInit, OnDestroy {
   allVideos: VideoDto[] = [];
   loading = false;
   error = false;
+  private cancelRequest$ = new Subject<void>();
 
   pageSize = 15;
   currentPage = 1;
@@ -41,11 +43,15 @@ export class VideosComponent implements OnInit {
   }
 
   loadData(forceRefresh = false): void {
+    this.cancelRequest$.next();
     this.loading = true;
     this.error = false;
 
     this.videoService.getCategorizedVideos(forceRefresh)
-      .pipe(finalize(() => { this.loading = false; }))
+      .pipe(
+        takeUntil(this.cancelRequest$),
+        finalize(() => { this.loading = false; })
+      )
       .subscribe({
         next: (data) => {
           this.extractAllVideos(data);
@@ -56,6 +62,11 @@ export class VideosComponent implements OnInit {
         },
         error: () => { this.error = true; },
       });
+  }
+
+  ngOnDestroy(): void {
+    this.cancelRequest$.next();
+    this.cancelRequest$.complete();
   }
 
   private extractAllVideos(data: CategorizedVideosDto): void {

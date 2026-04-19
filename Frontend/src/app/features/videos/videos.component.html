@@ -52,7 +52,8 @@
       <div class="filter-group filter-grow">
         <label for="search">Search</label>
         <input id="search" type="text" [(ngModel)]="searchText"
-               (input)="onFilterChange()" placeholder="Search videos…" />
+               (input)="onFilterChange()" (keydown.enter)="onFilterChange()"
+               placeholder="Search videos…" />
       </div>
 
       <div class="filter-group">

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { tap, timeout } from 'rxjs/operators';
+import { tap, timeout, retry } from 'rxjs/operators';
 import { CategorizedVideosDto, ChannelInputDto } from '../models/video.model';
 
 @Injectable({ providedIn: 'root' })
@@ -21,7 +21,8 @@ export class VideoService {
     }
     return this.http.get<CategorizedVideosDto>(`${this.baseUrl}/categorized`)
       .pipe(
-        timeout(15000),
+        timeout(30000),
+        retry(1),
         tap(data => { this.cachedData = data; })
       );
   }
