@@ -22,6 +22,95 @@ vectorizer = None
 id_to_category = None
 model_type = None
 
+# Keyword hashmap: category -> list of case-insensitive substrings that
+# strongly signal that category. Each match adds KEYWORD_BOOST to the ML
+# probability for that category before argmax, so clear keyword signals can
+# correct weak / ambiguous ML predictions without overriding confident ones.
+KEYWORD_BOOST = 0.15  # Per-match additive boost on probability
+CONFIDENCE_THRESHOLD = 0.50  # Below this, return "Uncategorized" instead of a category
+
+CATEGORY_KEYWORDS = {
+    "Comedy": [
+        "comedy", "funny", "joke", "jokes", "standup", "stand-up", "prank",
+        "parody", "sketch", "satire", "humor", "skit", "laugh", "hilarious",
+        "trolling", "reaction",
+    ],
+    "Education": [
+        "lesson", "tutorial", "course", "lecture", "study", "university",
+        "college", "exam", "homework", "classroom", "learn", "learning",
+        "explained", "explainer", "how it works", "crash course",
+    ],
+    "Entertainment": [
+        "movie", "film", "trailer", "review", "celebrity", "actor", "actress",
+        "behind the scenes", "hollywood", "tv show", "series", "netflix",
+        "disney", "marvel", "top 10", "top ten",
+    ],
+    "Gaming": [
+        "gameplay", "walkthrough", "playthrough", "speedrun", "minecraft",
+        "fortnite", "xbox", "playstation", "ps5", "ps4", "nintendo", "switch",
+        "steam", "gamer", "twitch", "esports", "let's play", "lets play",
+        "mods", "boss fight", "fps", "mmorpg", "roblox", "valorant",
+    ],
+    "Howto & Style": [
+        "diy", "how to", "how-to", "fashion", "makeup", "beauty", "haul",
+        "outfit", "decor", "home decor", "crafting", "nail art", "skincare",
+        "hair tutorial", "lookbook", "get ready with me", "grwm",
+    ],
+    "Music": [
+        "song", "lyrics", "music video", "official music video", "cover",
+        "remix", "album", "concert", "live performance", "band", "singer",
+        "guitar", "piano", "drum", "drums", "producer", "vocals",
+        "official audio", "feat.", "ft.", "mv", "acoustic",
+    ],
+    "News & Politics": [
+        "news", "politics", "election", "president", "government", "congress",
+        "senate", "policy", "protest", "breaking news", "coverage", "report",
+        "minister", "parliament", "campaign", "debate", "geopolitics",
+    ],
+    "People & Blogs": [
+        "vlog", "daily routine", "storytime", "story time", "draw my life",
+        "q&a", "qna", "life update", "my story", "day in my life",
+        "day in the life", "family", "morning routine", "night routine",
+    ],
+    "Science & Technology": [
+        "science", "physics", "chemistry", "biology", "engineering",
+        "mathematics", " math ", "quantum", "atom", "atoms", "molecule",
+        "experiment", "research", "theorem", "equation", "algorithm",
+        "computer", " ai ", "artificial intelligence", "machine learning",
+        "programming", "coding", "robot", "robotics", "space", "universe",
+        "galaxy", "astronomy", "dna", "evolution", "gravity", "nuclear",
+        "electron", "magnet", "laser", "semiconductor", "veritasium",
+        "jet engine", "reaction", "relativity", "neuron", "biotech",
+        "technology", "tech", "software", "hardware", "gadget",
+    ],
+    "Sports": [
+        "football", "soccer", "basketball", "baseball", "tennis", "nba",
+        "nfl", "mlb", "fifa", "world cup", "olympics", "athlete", "goal",
+        "highlights", "boxing", "mma", "ufc", "cricket", "golf", "hockey",
+        "match", "tournament", "championship",
+    ],
+}
+
+
+def apply_keyword_boost(probabilities, text):
+    """
+    Add KEYWORD_BOOST * (match count) to each category's probability
+    based on CATEGORY_KEYWORDS. Returns (boosted_probs, match_summary)
+    where match_summary maps category -> match count (only positive).
+    """
+    text_lower = text.lower()
+    boosted = probabilities.copy()
+    match_summary = {}
+
+    for cat_id, category in id_to_category.items():
+        keywords = CATEGORY_KEYWORDS.get(category, [])
+        match_count = sum(1 for kw in keywords if kw.lower() in text_lower)
+        if match_count > 0:
+            boosted[cat_id] += KEYWORD_BOOST * match_count
+            match_summary[category] = match_count
+
+    return boosted, match_summary
+
 def load_ml_model():
     """
     Load trained ML model and preprocessing components
@@ -48,6 +137,14 @@ def load_ml_model():
             return False
         
         model = joblib.load(str(model_path))
+
+        # Compatibility shim: pickle was saved with sklearn 1.8+ which dropped
+        # the `multi_class` attribute, but runtime sklearn 1.6.x still reads it
+        # inside predict_proba. 'auto' routes to multinomial softmax (matches
+        # the training default).
+        if not hasattr(model, 'multi_class'):
+            model.multi_class = 'auto'
+
         model_type = type(model).__name__
         print(f"✅ Model loaded: {model_type}")
         
@@ -172,21 +269,38 @@ def categorize():
         
         # 4. Transform text using TF-IDF vectorizer
         text_vectorized = vectorizer.transform([text])
-        
-        # 5. Predict category using YOUR trained model
-        prediction = model.predict(text_vectorized)[0]
-        category = id_to_category[prediction]
-        
-        # 6. Get confidence score (if model supports it)
-        confidence = None
+
+        # 5. Predict with ML model + apply keyword hashmap boost
         if hasattr(model, 'predict_proba'):
-            # Models with probability: Naive Bayes, Logistic Regression, Random Forest
             probabilities = model.predict_proba(text_vectorized)[0]
-            confidence = float(probabilities[prediction])
+            ml_prediction = int(probabilities.argmax())
+            ml_category = id_to_category[ml_prediction]
+            ml_confidence = float(probabilities[ml_prediction])
+
+            boosted_probs, keyword_matches = apply_keyword_boost(probabilities, text)
+            prediction = int(boosted_probs.argmax())
+            category = id_to_category[prediction]
+            confidence = float(boosted_probs[prediction])
+            # Clamp at 1.0 since additive boost can exceed 1
+            confidence = min(confidence, 1.0)
+
+            if keyword_matches:
+                print(f"[Categorize] 🔑 Keyword matches: {keyword_matches}")
+            if category != ml_category:
+                print(f"[Categorize] ↪️  Keyword boost flipped ML prediction: "
+                      f"{ml_category} ({ml_confidence:.2%}) → {category} ({confidence:.2%})")
         else:
-            # Models without probability: Linear SVM
+            # Models without predict_proba (e.g. Linear SVM) — fall back to raw predict
+            prediction = int(model.predict(text_vectorized)[0])
+            category = id_to_category[prediction]
             confidence = 1.0
-        
+
+        # 6b. Low-confidence guard — if the model isn't sure enough, refuse to guess
+        if confidence < CONFIDENCE_THRESHOLD:
+            print(f"[Categorize] ⚠️  Low confidence ({confidence:.2%} < {CONFIDENCE_THRESHOLD:.0%}) — "
+                  f"would have predicted '{category}', returning 'Uncategorized'")
+            category = "Uncategorized"
+
         # 7. Log result
         print(f"[Categorize] ✅ Result: {category} (confidence: {confidence:.2%})")
         
