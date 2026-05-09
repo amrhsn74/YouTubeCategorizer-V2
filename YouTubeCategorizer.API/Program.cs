@@ -1,7 +1,11 @@
 using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.SqlServer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using YouTubeCategorizer.API.Services;
 using YouTubeCategorizer.Application.Services;
 using YouTubeCategorizer.Core.Interfaces;
 using YouTubeCategorizer.Infrastructure.Data;
@@ -33,6 +37,28 @@ builder.Services.AddHangfire(configuration => configuration
 
 builder.Services.AddHangfireServer();
 
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException("JWT signing key is missing. Configure Jwt:Key in appsettings.");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "YouTubeCategorizer.API";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "YouTubeCategorizer.Client";
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+builder.Services.AddAuthorization();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -48,6 +74,8 @@ builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddScoped<IVideoProcessingService, VideoProcessingService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 // Use the Local service instead of the API wrapper
 builder.Services.AddScoped<IYouTubeService>(provider =>
@@ -57,6 +85,7 @@ builder.Services.AddHttpClient<ICategorizationService, CategorizationService>(cl
 {
     client.Timeout = TimeSpan.FromSeconds(30); // Per-request timeout; retries handle overall resilience
 });
+builder.Services.AddHostedService<MlApiAutoStartHostedService>();
 
 var app = builder.Build();
 
@@ -78,6 +107,7 @@ else
 // app.UseDefaultFiles();
 // app.UseStaticFiles();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())

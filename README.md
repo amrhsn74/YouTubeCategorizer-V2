@@ -68,6 +68,9 @@ Update `YouTubeCategorizer.API/appsettings.json` values:
 - `ConnectionStrings:DefaultConnection`
 - `YouTube:ApiKey`
 - `MLApi:Url` (default: `http://localhost:5001`)
+- `MLApi:AutoStart` (default `true` in Development, `false` otherwise)
+- `MLApi:PythonExecutable` and `MLApi:WorkingDirectory` if your Python path differs
+- `Jwt:Key` / `Jwt:Issuer` / `Jwt:Audience` / `Jwt:ExpiryMinutes` (used by sign-up/sign-in auth)
 - `GoogleAI:ApiKey` / `GoogleAI:ModelName` *(only needed if you re-enable the Gemini path — currently dormant)*
 
 Important: avoid committing real secrets to source control.
@@ -92,27 +95,32 @@ cd ..
 dotnet ef database update --project YouTubeCategorizer.Infrastructure --startup-project YouTubeCategorizer.API
 ```
 
-### 3) Start the ML categorization API (Python/Flask)
+### 3) One-time ML API setup (Python/Flask)
 
 ```powershell
 cd ML_Model
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r api/requirements.txt
-python api/app.py
 ```
 
 On macOS/Linux replace activation with `source venv/bin/activate`.
 
-Default URL: `http://localhost:5001`
+You no longer need to run `python api/app.py` manually in development.
+When you run the backend API, it auto-starts the Flask ML API using:
 
-Verify it's up:
+- `MLApi:PythonExecutable` (default `..\ML_Model\venv\Scripts\python.exe`)
+- `MLApi:WorkingDirectory` (default `..\ML_Model\api`)
 
-```bash
-curl http://localhost:5001/health
+Default ML API URL: `http://localhost:5001`
+
+Optional manual run (if needed):
+
+```powershell
+cd ML_Model
+.\venv\Scripts\Activate.ps1
+python api/app.py
 ```
-
-Keep this server running while the .NET backend is in use — `CategorizationService` calls it for every video.
 
 ### 4) Run backend API
 
@@ -139,6 +147,11 @@ Frontend default URL: `http://localhost:4200`
 The Angular dev server proxies `/api` and `/hangfire` to `http://localhost:5010` using `Frontend/proxy.conf.json`.
 
 ## API Endpoints (Current)
+
+### .NET API — `AuthController`
+
+- `POST /api/Auth/signup` - create account and return JWT token
+- `POST /api/Auth/signin` - login and return JWT token
 
 ### .NET API — `VideosController`
 
@@ -177,3 +190,4 @@ CATEGORY_KEYWORDS = { ... }
 - The Gemini-based implementation in `CategorizationService.cs` is preserved as a commented block for easy reference / rollback if you ever want to switch back.
 - If you retrain the model, re-run the notebooks in `ML_Model/notebooks/` (01 → 02 → 03) to regenerate `best_model.pkl`, `tfidf_vectorizer.pkl`, and `label_mapping.json`.
 - The bundled `.pkl` files were trained with a newer sklearn (1.8+); `app.py` contains a small compatibility shim so they load on sklearn 1.6.x as well.
+

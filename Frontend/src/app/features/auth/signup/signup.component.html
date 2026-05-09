@@ -1,0 +1,61 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1>Create account</h1>
+      <p>Start organizing and categorizing your YouTube channels.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="auth-form">
+      <label class="field">
+        <span>Full name</span>
+        <input type="text" formControlName="fullName" placeholder="Your full name" />
+        @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+          <small class="field-error">Full name must be at least 2 characters.</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Email</span>
+        <input type="email" formControlName="email" placeholder="you@example.com" />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <small class="field-error">Enter a valid email address.</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Password</span>
+        <input type="password" formControlName="password" placeholder="At least 8 characters" />
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <small class="field-error">Password must be at least 8 characters.</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Confirm password</span>
+        <input type="password" formControlName="confirmPassword" placeholder="Re-enter password" />
+        @if (form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid) {
+          <small class="field-error">Please confirm your password.</small>
+        }
+        @if (passwordsMismatch) {
+          <small class="field-error">Passwords do not match.</small>
+        }
+      </label>
+
+      @if (errorMessage) {
+        <div class="auth-error">{{ errorMessage }}</div>
+      }
+
+      <button class="btn btn-primary submit-btn" type="submit" [disabled]="isSubmitting">
+        @if (isSubmitting) {
+          <span class="spinner" aria-hidden="true"></span>
+        }
+        Sign Up
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account?
+      <a [routerLink]="['/auth/signin']" [queryParams]="{ returnUrl: returnUrl }">Sign in</a>
+    </div>
+  </div>
+</section>

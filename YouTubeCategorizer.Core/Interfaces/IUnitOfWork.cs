@@ -11,6 +11,7 @@ namespace YouTubeCategorizer.Core.Interfaces
         IChannelRepository Channels { get; }
         IVideoRepository Videos { get; }
         ICategoryRepository Categories { get; }
+        IUserRepository Users { get; }
         Task<int> SaveAsync();
     }
 }

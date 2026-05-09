@@ -17,6 +17,7 @@ namespace YouTubeCategorizer.Infrastructure.Data
         public DbSet<Channel> Channels { get; set; }
         public DbSet<Video> Videos { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,6 +56,17 @@ namespace YouTubeCategorizer.Infrastructure.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Label).IsRequired().HasMaxLength(100);
                 entity.HasIndex(e => e.Label).IsUnique();
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FullName).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.PasswordHash).IsRequired().HasMaxLength(512);
+                entity.Property(e => e.PasswordSalt).IsRequired().HasMaxLength(512);
+                entity.Property(e => e.CreatedAtUtc).IsRequired();
+                entity.HasIndex(e => e.Email).IsUnique();
             });
         }
     }

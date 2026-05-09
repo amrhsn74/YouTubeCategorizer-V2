@@ -14,6 +14,7 @@ namespace YouTubeCategorizer.Infrastructure.Repositories
         public IChannelRepository Channels { get; }
         public IVideoRepository Videos { get; }
         public ICategoryRepository Categories { get; }
+        public IUserRepository Users { get; }
 
         public UnitOfWork(AppDbContext context)
         {
@@ -21,6 +22,7 @@ namespace YouTubeCategorizer.Infrastructure.Repositories
             Channels = new ChannelRepository(_context);
             Videos = new VideoRepository(_context);
             Categories = new CategoryRepository(_context);
+            Users = new UserRepository(_context);
         }
 
         public async Task<int> SaveAsync()

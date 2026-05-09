@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterModule, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 
 interface NavItem {
   label: string;
@@ -22,6 +23,8 @@ interface NavSection {
   styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
+  readonly currentUser = this.authService.currentUser;
+
   readonly navSections: NavSection[] = [
     {
       title: 'Main',
@@ -59,4 +62,26 @@ export class SidebarComponent {
       ],
     },
   ];
+
+  constructor(
+    private readonly authService: AuthService,
+    private readonly router: Router
+  ) {}
+
+  get avatarInitials(): string {
+    const fullName = this.currentUser()?.fullName?.trim();
+    if (!fullName) {
+      return 'U';
+    }
+
+    const parts = fullName.split(/\s+/).filter(Boolean);
+    const first = parts[0]?.[0] ?? '';
+    const second = parts[1]?.[0] ?? '';
+    return `${first}${second}`.toUpperCase();
+  }
+
+  signOut(): void {
+    this.authService.signOut();
+    this.router.navigate(['/auth/signin']);
+  }
 }

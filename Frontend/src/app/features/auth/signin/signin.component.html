@@ -1,0 +1,43 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1>Welcome back</h1>
+      <p>Sign in to continue using YouTube Categorizer.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="auth-form">
+      <label class="field">
+        <span>Email</span>
+        <input type="email" formControlName="email" placeholder="you@example.com" />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <small class="field-error">Enter a valid email address.</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Password</span>
+        <input type="password" formControlName="password" placeholder="Enter your password" />
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <small class="field-error">Password must be at least 8 characters.</small>
+        }
+      </label>
+
+      @if (errorMessage) {
+        <div class="auth-error">{{ errorMessage }}</div>
+      }
+
+      <button class="btn btn-primary submit-btn" type="submit" [disabled]="isSubmitting">
+        @if (isSubmitting) {
+          <span class="spinner" aria-hidden="true"></span>
+        }
+        Sign In
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Don't have an account?
+      <a [routerLink]="['/auth/signup']" [queryParams]="{ returnUrl: returnUrl }">Create one</a>
+    </div>
+  </div>
+</section>
+

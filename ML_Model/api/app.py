@@ -131,9 +131,9 @@ def load_ml_model():
         # 1. Load the trained model
         model_path = models_dir / 'best_model.pkl'
         if not model_path.exists():
-            print(f"❌ ERROR: Model file not found!")
+            print(f"[ERROR] Model file not found!")
             print(f"   Expected location: {model_path}")
-            print(f"   → Run Jupyter notebook 03_model_training.ipynb first!")
+            print(f"   -> Run Jupyter notebook 03_model_training.ipynb first!")
             return False
         
         model = joblib.load(str(model_path))
@@ -146,26 +146,26 @@ def load_ml_model():
             model.multi_class = 'auto'
 
         model_type = type(model).__name__
-        print(f"✅ Model loaded: {model_type}")
+        print(f"[OK] Model loaded: {model_type}")
         
         # 2. Load TF-IDF vectorizer
         vectorizer_path = models_dir / 'tfidf_vectorizer.pkl'
         if not vectorizer_path.exists():
-            print(f"❌ ERROR: Vectorizer not found!")
+            print(f"[ERROR] Vectorizer not found!")
             print(f"   Expected location: {vectorizer_path}")
-            print(f"   → Run Jupyter notebook 03_model_training.ipynb first!")
+            print(f"   -> Run Jupyter notebook 03_model_training.ipynb first!")
             return False
         
         vectorizer = joblib.load(str(vectorizer_path))
         feature_count = len(vectorizer.get_feature_names_out())
-        print(f"✅ Vectorizer loaded: {feature_count} features")
+        print(f"[OK] Vectorizer loaded: {feature_count} features")
         
         # 3. Load label mapping (category names)
         mapping_path = models_dir / 'label_mapping.json'
         if not mapping_path.exists():
-            print(f"❌ ERROR: Label mapping not found!")
+            print(f"[ERROR] Label mapping not found!")
             print(f"   Expected location: {mapping_path}")
-            print(f"   → Run Jupyter notebook 02_preprocessing.ipynb first!")
+            print(f"   -> Run Jupyter notebook 02_preprocessing.ipynb first!")
             return False
         
         with open(mapping_path, 'r') as f:
@@ -173,21 +173,21 @@ def load_ml_model():
         
         # Create reverse mapping: label_id -> category_name
         id_to_category = {v: k for k, v in label_mapping.items()}
-        print(f"✅ Label mapping loaded: {len(id_to_category)} categories")
+        print(f"[OK] Label mapping loaded: {len(id_to_category)} categories")
         
         # Display available categories
-        print(f"\n📊 Available Categories:")
+        print(f"\n[INFO] Available Categories:")
         for cat_id in sorted(id_to_category.keys()):
             print(f"   {cat_id}: {id_to_category[cat_id]}")
         
         print("\n" + "="*70)
-        print("🚀 CUSTOM ML MODEL READY - NO EXTERNAL APIS USED!")
+        print("[READY] CUSTOM ML MODEL READY - NO EXTERNAL APIS USED!")
         print("="*70)
         
         return True
     
     except Exception as e:
-        print(f"\n❌ ERROR loading model: {str(e)}")
+        print(f"\n[ERROR] ERROR loading model: {str(e)}")
         import traceback
         traceback.print_exc()
         return False
@@ -257,7 +257,7 @@ def categorize():
         
         # 2. Validate text input
         if not text or len(text.strip()) == 0:
-            print("[Categorize] ⚠️  Empty text received, returning Uncategorized")
+            print("[Categorize] [WARN] Empty text received, returning Uncategorized")
             return jsonify({
                 "category": "Uncategorized",
                 "confidence": 0.0
@@ -285,24 +285,24 @@ def categorize():
             confidence = min(confidence, 1.0)
 
             if keyword_matches:
-                print(f"[Categorize] 🔑 Keyword matches: {keyword_matches}")
+                print(f"[Categorize] [INFO] Keyword matches: {keyword_matches}")
             if category != ml_category:
-                print(f"[Categorize] ↪️  Keyword boost flipped ML prediction: "
-                      f"{ml_category} ({ml_confidence:.2%}) → {category} ({confidence:.2%})")
+                print(f"[Categorize] [INFO] Keyword boost flipped ML prediction: "
+                      f"{ml_category} ({ml_confidence:.2%}) -> {category} ({confidence:.2%})")
         else:
-            # Models without predict_proba (e.g. Linear SVM) — fall back to raw predict
+            # Models without predict_proba (e.g. Linear SVM) - fall back to raw predict
             prediction = int(model.predict(text_vectorized)[0])
             category = id_to_category[prediction]
             confidence = 1.0
 
-        # 6b. Low-confidence guard — if the model isn't sure enough, refuse to guess
+        # 6b. Low-confidence guard - if the model isn't sure enough, refuse to guess
         if confidence < CONFIDENCE_THRESHOLD:
-            print(f"[Categorize] ⚠️  Low confidence ({confidence:.2%} < {CONFIDENCE_THRESHOLD:.0%}) — "
+            print(f"[Categorize] [WARN] Low confidence ({confidence:.2%} < {CONFIDENCE_THRESHOLD:.0%}) - "
                   f"would have predicted '{category}', returning 'Uncategorized'")
             category = "Uncategorized"
 
         # 7. Log result
-        print(f"[Categorize] ✅ Result: {category} (confidence: {confidence:.2%})")
+        print(f"[Categorize] [OK] Result: {category} (confidence: {confidence:.2%})")
         
         # 8. Return response to C# application
         return jsonify({
@@ -312,7 +312,7 @@ def categorize():
     
     except Exception as e:
         # Log error and return Uncategorized (C# will handle gracefully)
-        print(f"[Categorize] ❌ ERROR: {str(e)}")
+        print(f"[Categorize] [ERROR] ERROR: {str(e)}")
         import traceback
         traceback.print_exc()
         
@@ -363,13 +363,13 @@ def categorize_batch():
         
         # 6. Log summary
         unique_categories = set(categories)
-        print(f"[Batch] ✅ Complete! Found categories: {unique_categories}")
+        print(f"[Batch] [OK] Complete! Found categories: {unique_categories}")
         
         # 7. Return response
         return jsonify({"categories": categories}), 200
     
     except Exception as e:
-        print(f"[Batch] ❌ ERROR: {str(e)}")
+        print(f"[Batch] [ERROR] ERROR: {str(e)}")
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
@@ -443,9 +443,9 @@ if __name__ == '__main__':
     # Load model at startup
     if not load_ml_model():
         print("\n" + "="*70)
-        print("❌ FAILED TO START - MODEL NOT LOADED")
+        print("[ERROR] FAILED TO START - MODEL NOT LOADED")
         print("="*70)
-        print("\n🔧 TROUBLESHOOTING STEPS:")
+        print("\n[TROUBLESHOOTING] STEPS:")
         print("1. Check that you completed Part A (Jupyter notebooks)")
         print("2. Verify these files exist in ML_Model/models/:")
         print("   - best_model.pkl")
@@ -457,15 +457,15 @@ if __name__ == '__main__':
     
     # Start Flask server
     print("\n" + "="*70)
-    print("🚀 STARTING ML API SERVER")
+    print("[START] STARTING ML API SERVER")
     print("="*70)
-    print(f"🌐 Server URL: http://localhost:5001")
-    print(f"📡 Listening on all interfaces (0.0.0.0:5001)")
-    print(f"⚙️  Model: {model_type}")
-    print(f"📊 Categories: {len(id_to_category)}")
-    print(f"\n💡 This API serves YOUR custom-trained model")
-    print(f"💡 NO external ML APIs are used")
-    print(f"\n⌨️  Press Ctrl+C to stop the server")
+    print(f"[INFO] Server URL: http://localhost:5001")
+    print(f"[INFO] Listening on all interfaces (0.0.0.0:5001)")
+    print(f"[INFO] Model: {model_type}")
+    print(f"[INFO] Categories: {len(id_to_category)}")
+    print(f"\n[INFO] This API serves YOUR custom-trained model")
+    print(f"[INFO] NO external ML APIs are used")
+    print(f"\n[INFO] Press Ctrl+C to stop the server")
     print("="*70 + "\n")
     
     # Run Flask application
